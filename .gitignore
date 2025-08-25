@@ -1,0 +1,55 @@
+# folders
+*test*/
+build*/
+build/
+build*/
+log/
+logs/
+condor/
+condor-vbf/
+vbfhmm/
+hmm_origin/
+# ignore all analysis in the config folder apart from the unittest and the template
+analysis_configurations/*
+!analysis_configurations/unittest
+!analysis_configurations/template_analysis
+# Doxygen Documentation
+docs/doxygen
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.vscode
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pythonstuff
+*.pyc
+__pycache__/
+*__init__.py
+
+# C extensions
+*.so
+
+# ROOT files in the main folder
+/*.root
+
+# plots / figures
+*.png
+*.pdf
+*.svg
+
+# Flamegraph
+FlameGraph/
+*.perf
+*.folded
+*.pl
+perf.data
+perf.data.old
