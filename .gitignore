@@ -9,10 +9,9 @@ condor/
 condor-vbf/
 vbfhmm/
 hmm_origin/
-# ignore all analysis in the config folder apart from the unittest and the template
-analysis_configurations/*
-!analysis_configurations/unittest
-!analysis_configurations/template_analysis
+.cache*/
+.cache/
+.clangd
 # Doxygen Documentation
 docs/doxygen
 

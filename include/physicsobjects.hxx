@@ -275,6 +275,23 @@ ROOT::RDF::RNode CheckForDiLeptonPairs(
     const std::string &leptons_phi, const std::string &leptons_mass,
     const std::string &leptons_charge, const std::string &leptons_mask,
     const float dR_cut);
+ROOT::RDF::RNode
+CutVarMaxPiecewise(ROOT::RDF::RNode df, const std::string &quantity,
+                   const std::string &regionvar, const std::string &maskname,
+                   const float &thresholdBelow, const float &thresholdAbove,
+                   const float &regionThreshold, const bool absMode);
+ROOT::RDF::RNode
+CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
+                   const std::string &quantity, const std::string &objEta,
+                   const std::string &objPhi, const std::string &thisEta,
+                   const std::string &thisPhi, const float &threshold);
+ROOT::RDF::RNode CutVarMaxCloestObjPiecewise(
+    ROOT::RDF::RNode df, const std::string &maskname,
+    const std::string &quantity, const std::string &objEta,
+    const std::string &objPhi, const std::string &thisEta,
+    const std::string &thisPhi, const std::string &regionvar,
+    const float &thresholdBelow, const float &thresholdAbove,
+    const float &regionThreshold, const bool absMode);
 namespace muon {
 ROOT::RDF::RNode CutID(ROOT::RDF::RNode df, const std::string &maskname,
                        const std::string &nameID);
