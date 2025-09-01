@@ -44,6 +44,8 @@ def build_config(
         available_scopes,
     )
 
+    # region global parameters
+    
     configuration.add_config_parameters(
         "global",
         {
@@ -127,9 +129,231 @@ def build_config(
         },
     )
 
+    # muon parameters
+    configuration.add_config_parameters(
+        ["global","tthmm"],
+        {
+            "min_muon_pt": 20, # ggh, vbf
+            "max_muon_eta": 2.4, # ggh, vbf
+            "muon_id": "Muon_mediumId", # ggh, vbf cut-based atm https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Medium_Muon
+            "muon_iso_cut": 0.25, # ggh, vbf PFIsoLoose dR=0.4 https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Particle_Flow_isolation
+        },
+    )
+    
+    # electron parameters
+    configuration.add_config_parameters(
+        "global",
+        {
+            "ele_id": EraModifier(
+                {
+                    "2016preVFP": "Electron_mvaFall17V2noIso_WP90",
+                    "2016postVFP": "Electron_mvaFall17V2noIso_WP90",
+                    "2017": "Electron_mvaFall17V2noIso_WP90",
+                    "2018": "Electron_mvaFall17V2noIso_WP90",
+                    "2022": "Electron_mvaNoIso_WP90",
+                }
+            ),
+        }
+    )
+    configuration.add_config_parameters(
+        "global",
+        {
+            "min_ele_pt": 20,
+            "max_ele_eta": 2.5,
+            "upper_threshold_barrel": 1.4442,
+            "lower_threshold_endcap": 1.566,
+        }
+    )
+
+    # Muon scale factors configuration
+    configuration.add_config_parameters(
+        "global",
+        {
+            "muon_sf_file": EraModifier(
+                {
+                    "2016preVFP": "data/jsonpog-integration/POG/MUO/2016preVFP_UL/muon_Z.json.gz",
+                    "2016postVFP": "data/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_Z.json.gz",
+                    "2017": "data/jsonpog-integration/POG/MUO/2017_UL/muon_Z.json.gz",
+                    "2018": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
+                    "2022": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
+                }
+            ),
+            "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",
+            "muon_iso_sf_name": "NUM_TightRelIso_DEN_MediumID",
+            "muon_sf_year_id": EraModifier(
+                {
+                    "2016preVFP": "2016preVFP_UL",
+                    "2016postVFP": "2016postVFP_UL",
+                    "2017": "2017_UL",
+                    "2018": "2018_UL",
+                    "2022": "2018_UL",
+                }
+            ),
+            "muon_sf_varation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
+        },
+    )
+    
+    # jet base selection:
+    configuration.add_config_parameters(
+        "global",
+        {
+            "min_jet_pt": 25, # vh
+            "max_jet_eta": 4.7, # vh
+            # "jet_id": 2,  # default: 2==pass tight ID and fail tightLepVeto
+            "jet_id": EraModifier(
+                {
+                    # Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto
+                    "2016preVFP": 1,  # 1==pass(loose)
+                    "2016postVFP": 1,  # 1==pass(loose)
+                    "2017": 2,  # 2==pass(tight)
+                    "2018": 2,  # 2==pass(tight)
+                    "2022": 2,  # 2==pass(tight)
+                }
+            ),
+            "jet_puid": EraModifier(
+                {
+                    "2016preVFP": 1,  # 0==fail, 1==pass(loose), 3==pass(loose,medium), 7==pass(loose,medium,tight)
+                    "2016postVFP": 1,  # 0==fail, 1==pass(loose), 3==pass(loose,medium), 7==pass(loose,medium,tight)
+                    "2017": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
+                    "2018": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
+                    "2022": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
+                }
+            ),
+            "jet_puid_max_pt": 50,  # recommended to apply puID only for jets below 50 GeV
+            "deltaR_jet_veto": 0.4, # vh jet-muon dR<0.4 overlap removal
+            "jet_reapplyJES": False,
+            "jet_jes_sources": '{""}',
+            "jet_jes_shift": 0,
+            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "jet_jec_file": EraModifier(
+                {
+                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
+                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
+                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
+                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
+                    "2022": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
+                }
+            ),
+            "jet_jer_tag": EraModifier(
+                {
+                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
+                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
+                    "2017": '"Summer19UL17_JRV2_MC"',
+                    "2018": '"Summer19UL18_JRV2_MC"',
+                    "2022": '"Summer19UL18_JRV2_MC"',
+                }
+            ),
+            "jet_jes_tag_data": '""',
+            "jet_jes_tag": EraModifier(
+                {
+                    "2016preVFP": '"Summer19UL16APV_V7_MC"',
+                    "2016postVFP": '"Summer19UL16_V7_MC"',
+                    "2017": '"Summer19UL17_V5_MC"',
+                    "2018": '"Summer19UL18_V5_MC"',
+                    "2022": '"Summer19UL18_V5_MC"',
+                }
+            ),
+            "jet_jec_algo": '"AK4PFchs"',
+        },
+    )
+    
+    # fat jet base selection:
+    # vhbb run2 approval link: fatjet in slide 4
+    # https://indico.cern.ch/event/1198083/contributions/5039217/attachments/2507086/4309256/Calandri_HIGPAG_13092022.pdf
+    configuration.add_config_parameters(
+        "global",
+        {
+            "min_fatjet_pt": 150, # vhbb selection 250
+            "max_fatjet_eta": 2.5, # vhbb selection
+            "min_fatjet_MSD": 50, # soft drop mass > 50 GeV
+            # "fatjet_id": 2,  # default: 2==pass tight ID and fail tightLepVeto
+            "fatjet_id": EraModifier(
+                {
+                    # Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto
+                    "2016preVFP": 1,  # 1==pass(loose)
+                    "2016postVFP": 1,  # 1==pass(loose)
+                    "2017": 2,  # 2==pass(tight)
+                    "2018": 2,  # 2==pass(tight)
+                    "2022": 2,  # 2==pass(tight)
+                }
+            ),
+            # may no need fatjet_puid
+            "deltaR_fatjet_veto": 0.8, # vh fatjet-muon dR<0.8 overlap removal
+            "fatjet_reapplyJES": False,
+            "fatjet_jes_sources": '{""}',
+            "fatjet_jes_shift": 0,
+            "fatjet_jer_shift": '"nom"',  # or '"up"', '"down"'
+            "fatjet_jec_file": EraModifier(
+                {
+                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/fatJet_jerc.json.gz"',
+                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/fatJet_jerc.json.gz"',
+                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/fatJet_jerc.json.gz"',
+                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/fatJet_jerc.json.gz"',
+                    "2022": '"data/jsonpog-integration/POG/JME/2018_UL/fatJet_jerc.json.gz"',
+                }
+            ),
+            "fatjet_jer_tag": EraModifier(
+                {
+                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"', # TODO JER tag
+                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
+                    "2017": '"Summer19UL17_JRV2_MC"',
+                    "2018": '"Summer19UL18_JRV2_MC"',
+                    "2022": '"Summer19UL18_JRV2_MC"',
+                }
+            ),
+            "fatjet_jes_tag_data": '""',
+            "fatjet_jes_tag": EraModifier(
+                {
+                    "2016preVFP": '"Summer19UL16APV_V7_MC"', # TODO JES tag
+                    "2016postVFP": '"Summer19UL16_V7_MC"',
+                    "2017": '"Summer19UL17_V5_MC"',
+                    "2018": '"Summer19UL18_V5_MC"',
+                    "2022": '"Summer19UL18_V5_MC"',
+                }
+            ),
+            "fatjet_jec_algo": '"AK8PFPuppi"',
+        },
+    )
+    
+    # bjet base selection:
+    configuration.add_config_parameters(
+        "global",
+        {
+            "min_bjet_pt": 25, # vh
+            "max_bjet_eta": EraModifier( # vh
+                {
+                    "2016preVFP": 2.4,
+                    "2016postVFP": 2.4,
+                    "2017": 2.5,
+                    "2018": 2.5,
+                    "2022": 2.5,
+                }
+            ),
+            "btag_cut_loose": EraModifier(  # loose # (vhmm Run2 use DeepCSV)
+                {
+                    "2016preVFP": 0.2027, # 2016preVFP: 0.2027, 2016postVFP: 0.1918
+                    "2016postVFP": 0.1918, # 2016preVFP: 0.2027, 2016postVFP: 0.1918
+                    "2017": 0.1355, # 2017: 0.1355
+                    "2018": 0.1208, # 2018: 0.1208
+                    "2022": 0.1208,
+                }
+            ),
+            "btag_cut_medium": EraModifier(  # medium
+                {
+                    "2016preVFP": 0.6001, # 2016preVFP: 0.6001, 2016postVFP: 0.5847
+                    "2016postVFP": 0.5847, # 2016preVFP: 0.6001, 2016postVFP: 0.5847
+                    "2017": 0.4506, # 2017: 0.4506
+                    "2018": 0.4168, # 2018: 0.4168
+                    "2022": 0.4168,
+                }
+            ),
+        },
+    )
+    
+    # singlemuon_trigger
     # vh add triggers (copying htautau mtau TODO)
     configuration.add_config_parameters(
-        ["gghmm","vbfhmm","e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
+        ["global","tthmm"],
         {
             "singlemuon_trigger": EraModifier(
                 {
@@ -220,91 +444,11 @@ def build_config(
             ),
         },
     )
-
-    # muon base selection:
-    configuration.add_config_parameters(
-        ["global","gghmm","vbfhmm","e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
-        {
-            "min_muon_pt": 20, # ggh, vbf
-            "max_muon_eta": 2.4, # ggh, vbf
-            "muon_id": "Muon_mediumId", # ggh, vbf cut-based atm https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Medium_Muon
-            "muon_iso_cut": 0.25, # ggh, vbf PFIsoLoose dR=0.4 https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Particle_Flow_isolation
-        },
-    )
-    configuration.add_config_parameters(
-        ["e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
-        {
-            #"max_muon_dxy": 0.05, # vh
-            #"max_muon_dz": 0.10, # vh
-            #"max_sip3d" : 8.0, # vh
-            #"min_lepmva" : 0.4, 
-            #"min_muon_mvaTTH" : 0.4,
-        },
-    )
-    # electron base selection:
-    configuration.add_config_parameters(
-        "global",
-        {
-            "ele_id": EraModifier(
-                {
-                    "2016preVFP": "Electron_mvaFall17V2noIso_WP90",
-                    "2016postVFP": "Electron_mvaFall17V2noIso_WP90",
-                    "2017": "Electron_mvaFall17V2noIso_WP90",
-                    "2018": "Electron_mvaFall17V2noIso_WP90",
-                    "2022": "Electron_mvaNoIso_WP90",
-                }
-            ),
-        }
-    )
-    configuration.add_config_parameters(
-        "global",
-        {
-            "min_ele_pt": 20,
-            "max_ele_eta": 2.5,
-            "upper_threshold_barrel": 1.444,
-            "lower_threshold_endcap": 1.566,
-        }
-    )
-    configuration.add_config_parameters(
-        ["e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
-        {
-            "max_ele_dxy": 0.05,
-            "max_ele_dz": 0.10,
-            # "ele_id": "Electron_mvaFall17V2noIso_WP90", # 2022, Electron_mvaNoIso_WP90
-            "ele_conv_veto": "Electron_convVeto",
-            "ele_missing_hits": 2,
-            # also need max_sip3d
-            # "min_lepmva": 0.4,
-            "min_electron_mvaTTH" : 0.4,
-        }
-    )
-    # Muon scale factors configuration
-    configuration.add_config_parameters(
-        ["gghmm","vbfhmm","e2m","m2m","eemm","mmmm","nnmm","nnmm_dycontrol","nnmm_topcontrol"],
-        {
-            "muon_sf_file": EraModifier(
-                {
-                    "2016preVFP": "data/jsonpog-integration/POG/MUO/2016preVFP_UL/muon_Z.json.gz",
-                    "2016postVFP": "data/jsonpog-integration/POG/MUO/2016postVFP_UL/muon_Z.json.gz",
-                    "2017": "data/jsonpog-integration/POG/MUO/2017_UL/muon_Z.json.gz",
-                    "2018": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
-                    "2022": "data/jsonpog-integration/POG/MUO/2018_UL/muon_Z.json.gz",
-                }
-            ),
-            "muon_id_sf_name": "NUM_MediumID_DEN_TrackerMuons",
-            "muon_iso_sf_name": "NUM_TightRelIso_DEN_MediumID",
-            "muon_sf_year_id": EraModifier(
-                {
-                    "2016preVFP": "2016preVFP_UL",
-                    "2016postVFP": "2016postVFP_UL",
-                    "2017": "2017_UL",
-                    "2018": "2018_UL",
-                    "2022": "2018_UL",
-                }
-            ),
-            "muon_sf_varation": "sf",  # "sf" is nominal, "systup"/"systdown" are up/down variations
-        },
-    )
+    
+    # endregion
+    
+    # region ["e2m","eemm"] parameters
+    
     # electron scale factors configuration
     configuration.add_config_parameters(
         ["e2m","eemm"],
@@ -332,198 +476,39 @@ def build_config(
         },
     )
 
-    # jet base selection:
+    # endregion
+    
+    # region ["e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"] parameters
+    
+    # muon base selection:
     configuration.add_config_parameters(
-        "global",
+        ["e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
         {
-            "min_jet_pt": 25, # vh
-            "max_jet_eta": 4.7, # vh
-            # "jet_id": 2,  # default: 2==pass tight ID and fail tightLepVeto
-            "jet_id": EraModifier(
-                {
-                    # Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto
-                    "2016preVFP": 1,  # 1==pass(loose)
-                    "2016postVFP": 1,  # 1==pass(loose)
-                    "2017": 2,  # 2==pass(tight)
-                    "2018": 2,  # 2==pass(tight)
-                    "2022": 2,  # 2==pass(tight)
-                }
-            ),
-            "jet_puid": EraModifier(
-                {
-                    "2016preVFP": 1,  # 0==fail, 1==pass(loose), 3==pass(loose,medium), 7==pass(loose,medium,tight)
-                    "2016postVFP": 1,  # 0==fail, 1==pass(loose), 3==pass(loose,medium), 7==pass(loose,medium,tight)
-                    "2017": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
-                    "2018": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
-                    "2022": 4,  # 0==fail, 4==pass(loose), 6==pass(loose,medium), 7==pass(loose,medium,tight)
-                }
-            ),
-            "jet_puid_max_pt": 50,  # recommended to apply puID only for jets below 50 GeV
-            "deltaR_jet_veto": 0.4, # vh jet-muon dR<0.4 overlap removal
-            "jet_reapplyJES": False,
-            "jet_jes_sources": '{""}',
-            "jet_jes_shift": 0,
-            "jet_jer_shift": '"nom"',  # or '"up"', '"down"'
-            "jet_jec_file": EraModifier(
-                {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/jet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/jet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/jet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
-                    "2022": '"data/jsonpog-integration/POG/JME/2018_UL/jet_jerc.json.gz"',
-                }
-            ),
-            "jet_jer_tag": EraModifier(
-                {
-                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"',
-                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
-                    "2017": '"Summer19UL17_JRV2_MC"',
-                    "2018": '"Summer19UL18_JRV2_MC"',
-                    "2022": '"Summer19UL18_JRV2_MC"',
-                }
-            ),
-            "jet_jes_tag_data": '""',
-            "jet_jes_tag": EraModifier(
-                {
-                    "2016preVFP": '"Summer19UL16APV_V7_MC"',
-                    "2016postVFP": '"Summer19UL16_V7_MC"',
-                    "2017": '"Summer19UL17_V5_MC"',
-                    "2018": '"Summer19UL18_V5_MC"',
-                    "2022": '"Summer19UL18_V5_MC"',
-                }
-            ),
-            "jet_jec_algo": '"AK4PFchs"',
+            #"max_muon_dxy": 0.05, # vh
+            #"max_muon_dz": 0.10, # vh
+            #"max_sip3d" : 8.0, # vh
+            #"min_lepmva" : 0.4, 
+            #"min_muon_mvaTTH" : 0.4,
         },
     )
-    # fat jet base selection:
-    # vhbb run2 approval link: fatjet in slide 4
-    # https://indico.cern.ch/event/1198083/contributions/5039217/attachments/2507086/4309256/Calandri_HIGPAG_13092022.pdf
+    # electron base selection:
     configuration.add_config_parameters(
-        "global",
+        ["e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
         {
-            "min_fatjet_pt": 150, # vhbb selection 250
-            "max_fatjet_eta": 2.5, # vhbb selection
-            "min_fatjet_MSD": 50, # soft drop mass > 50 GeV
-            # "fatjet_id": 2,  # default: 2==pass tight ID and fail tightLepVeto
-            "fatjet_id": EraModifier(
-                {
-                    # Jet ID flags bit1 is loose (always false in 2017 since it does not exist), bit2 is tight, bit3 is tightLepVeto
-                    "2016preVFP": 1,  # 1==pass(loose)
-                    "2016postVFP": 1,  # 1==pass(loose)
-                    "2017": 2,  # 2==pass(tight)
-                    "2018": 2,  # 2==pass(tight)
-                    "2022": 2,  # 2==pass(tight)
-                }
-            ),
-            # may no need fatjet_puid
-            "deltaR_fatjet_veto": 0.8, # vh fatjet-muon dR<0.8 overlap removal
-            "fatjet_reapplyJES": False,
-            "fatjet_jes_sources": '{""}',
-            "fatjet_jes_shift": 0,
-            "fatjet_jer_shift": '"nom"',  # or '"up"', '"down"'
-            "fatjet_jec_file": EraModifier(
-                {
-                    "2016preVFP": '"data/jsonpog-integration/POG/JME/2016preVFP_UL/fatJet_jerc.json.gz"',
-                    "2016postVFP": '"data/jsonpog-integration/POG/JME/2016postVFP_UL/fatJet_jerc.json.gz"',
-                    "2017": '"data/jsonpog-integration/POG/JME/2017_UL/fatJet_jerc.json.gz"',
-                    "2018": '"data/jsonpog-integration/POG/JME/2018_UL/fatJet_jerc.json.gz"',
-                    "2022": '"data/jsonpog-integration/POG/JME/2018_UL/fatJet_jerc.json.gz"',
-                }
-            ),
-            "fatjet_jer_tag": EraModifier(
-                {
-                    "2016preVFP": '"Summer20UL16APV_JRV3_MC"', # TODO JER tag
-                    "2016postVFP": '"Summer20UL16_JRV3_MC"',
-                    "2017": '"Summer19UL17_JRV2_MC"',
-                    "2018": '"Summer19UL18_JRV2_MC"',
-                    "2022": '"Summer19UL18_JRV2_MC"',
-                }
-            ),
-            "fatjet_jes_tag_data": '""',
-            "fatjet_jes_tag": EraModifier(
-                {
-                    "2016preVFP": '"Summer19UL16APV_V7_MC"', # TODO JES tag
-                    "2016postVFP": '"Summer19UL16_V7_MC"',
-                    "2017": '"Summer19UL17_V5_MC"',
-                    "2018": '"Summer19UL18_V5_MC"',
-                    "2022": '"Summer19UL18_V5_MC"',
-                }
-            ),
-            "fatjet_jec_algo": '"AK8PFPuppi"',
-        },
-    )
-    # bjet base selection:
-    configuration.add_config_parameters(
-        "global",
-        {
-            "min_bjet_pt": 25, # vh
-            "max_bjet_eta": EraModifier( # vh
-                {
-                    "2016preVFP": 2.4,
-                    "2016postVFP": 2.4,
-                    "2017": 2.5,
-                    "2018": 2.5,
-                    "2022": 2.5,
-                }
-            ),
-            "btag_cut_loose": EraModifier(  # loose # (vhmm Run2 use DeepCSV)
-                {
-                    "2016preVFP": 0.2027, # 2016preVFP: 0.2027, 2016postVFP: 0.1918
-                    "2016postVFP": 0.1918, # 2016preVFP: 0.2027, 2016postVFP: 0.1918
-                    "2017": 0.1355, # 2017: 0.1355
-                    "2018": 0.1208, # 2018: 0.1208
-                    "2022": 0.1208,
-                }
-            ),
-            "btag_cut_medium": EraModifier(  # medium
-                {
-                    "2016preVFP": 0.6001, # 2016preVFP: 0.6001, 2016postVFP: 0.5847
-                    "2016postVFP": 0.5847, # 2016preVFP: 0.6001, 2016postVFP: 0.5847
-                    "2017": 0.4506, # 2017: 0.4506
-                    "2018": 0.4168, # 2018: 0.4168
-                    "2022": 0.4168,
-                }
-            ),
-        },
-    )
-
-    # veto ttH
-    configuration.add_config_parameters(
-        "global",
-        {
-            "vetottH_max_nbjets_loose" : 1,
-            "vetottH_max_nbjets_medium" : 0,
-            "vh_njets" : 3,
+            "max_ele_dxy": 0.05,
+            "max_ele_dz": 0.10,
+            # "ele_id": "Electron_mvaFall17V2noIso_WP90", # 2022, Electron_mvaNoIso_WP90
+            "ele_conv_veto": "Electron_convVeto",
+            "ele_missing_hits": 2,
+            # also need max_sip3d
+            # "min_lepmva": 0.4,
+            "min_electron_mvaTTH" : 0.4,
         }
     )
-
-    #veto VH
-    configuration.add_config_parameters(
-        ["gghmm","vbfhmm"],
-        {
-            "vetoVH_max_nmuons" : 2,
-            "vetoVH_max_nelectrons" : 0,
-        }
-    )
-
-    # vbfhmm cuts
-    configuration.add_config_parameters(
-        ["vbfhmm"],
-        {
-            "vbf_nmuons" : 2,
-            "flag_DiMuonFromHiggs" : 1,
-            "flag_LeptonChargeSumVeto" : 2, # sum lepton charge = 0
-            "lead_muon_pt" : 26,
-            # "dimuon_pair" : 1, # dimuon_pair in [110,150] >=1
-            "vbf_njets" : 2,
-            "lead_jet_pt" : 35, #lead jet pt > 35
-            "sublead_jet_pt" : 25, #sublead jet pt > 25
-            "dijet_mass" : 400, #dijet mass > 400
-            "dijet_eta" : 2.5, #jet-jet delta eta > 2.5
-        }
-    )
-
-
+    # endregion
+    
+    # region m2m, e2m, eemm, mmmm, nnmm, fjmm, nnmm_dycontrol, nnmm_topcontrol own parameters
+    
     # m2m cuts
     configuration.add_config_parameters(
         "m2m",
@@ -618,15 +603,110 @@ def build_config(
         }
     )
 
-    """
-    ## all scopes misc settings
+    # endregion
+    
+    # region gghmm or vbfhmm parameters
+    
+    # veto ttH
     configuration.add_config_parameters(
-        scopes,
+        ["gghmm","vbfhmm"],
         {
-            "pairselection_min_dR": 0.5,
-        },
+            "vetottH_max_nbjets_loose" : 1,
+            "vetottH_max_nbjets_medium" : 0,
+            "vh_njets" : 3,
+        }
     )
-    """
+
+    #veto VH
+    configuration.add_config_parameters(
+        ["gghmm","vbfhmm"],
+        {
+            "vetoVH_max_nmuons" : 2,
+            "vetoVH_max_nelectrons" : 0,
+        }
+    )
+
+    # vbfhmm cuts
+    configuration.add_config_parameters(
+        ["vbfhmm"],
+        {
+            "vbf_nmuons" : 2,
+            "flag_DiMuonFromHiggs" : 1,
+            "flag_LeptonChargeSumVeto" : 2, # sum lepton charge = 0
+            "lead_muon_pt" : 26,
+            # "dimuon_pair" : 1, # dimuon_pair in [110,150] >=1
+            "vbf_njets" : 2,
+            "lead_jet_pt" : 35, #lead jet pt > 35
+            "sublead_jet_pt" : 25, #sublead jet pt > 25
+            "dijet_mass" : 400, #dijet mass > 400
+            "dijet_eta" : 2.5, #jet-jet delta eta > 2.5
+        }
+    )
+
+    # endregion
+    
+    # region tthmm parameters
+    # add by hao
+    
+    # ttH filter
+    configuration.add_config_parameters(
+        ["global","tthmm"],
+        {
+            "ttH_min_nbjets_loose" : 2,
+            "ttH_min_nbjets_medium" : 1,
+            "flag_DiMuonFromHiggs" : 1,
+        }
+    )
+    # muon selection TODO
+    configuration.add_config_parameters(
+        ["global","tthmm"],
+        {
+            "min_muon_pt": 20,
+            "max_muon_eta": 2.4,
+            "muon_id": "Muon_mediumId", # ggh, vbf cut-based atm https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Medium_Muon]
+            "max_muon_dxy": 0.05,
+            "max_muon_dz": 0.10,
+            "max_sip3d": 8,
+            "muon_mini_iso_cut": 0.4,
+            "max_muon_deepCSVClosest_barrel": 0.8958,
+            "max_muon_deepCSVClosest_endcap": 0.8001,
+            # deepCSV^cloest not included
+        }
+    )
+    # electron selection
+    configuration.add_config_parameters(
+        ["global","tthmm"],
+        {
+            "max_ele_dxy": 0.05,
+            "max_ele_dz": 0.10,
+            "ElectronSIP3DCut": 8,
+            "ele_missing_hits": 2,
+            "ele_mini_iso_cut": 0.4,
+            "threshold_barrel_endcap": 1.479,
+            "max_ele_sieie_barrel": 0.011,
+            "max_ele_sieie_endcap": 0.030,
+            "max_ele_hoe_barrel": 0.10,
+            "max_ele_hoe_endcap": 0.07,
+            "max_ele_EInvMinusPInv_barrel": 0.010,
+            "max_ele_EInvMinusPInv_endcap": 0.005,
+            "min_ele_EInvMinusPInv": -0.05,
+            "max_ele_deepCSVClosest_barrel": 0.8958,
+            "max_ele_deepCSVClosest_endcap": 0.8001,
+        }
+    )
+
+    # endregion
+
+    # ## all scopes misc settings
+    # configuration.add_config_parameters(
+    #     scopes,
+    #     {
+    #         "pairselection_min_dR": 0.5,
+    #     },
+    # )
+    
+    # region global producers
+    
     configuration.add_producers(
         "global",
         [
@@ -634,20 +714,17 @@ def build_config(
             event.PUweights,
             event.Lumi,
             event.MetFilter,
-            muons.BaseMuons, # vh
-            # vh muon Rochester corr, FSR recovery, GeoFit? TODO
-            # vh muon FSR recovery
+            muons.BaseMuons,
             electrons.BaseElectrons,
             jets.JetEnergyCorrection, # vh include pt corr and mass corr
             jets.GoodJets, # vh overlap removal with ?base? muons done [need validation]
             jets.GoodBJetsLoose, 
             jets.GoodBJetsMedium, 
-            ###
             jets.NumberOfGoodJets,
             jets.NumberOfLooseB, # vh count loose bjets for ttH veto
             jets.NumberOfMediumB, # vh count medium bjets for ttH veto
-            event.VetottHLooseB, # vh veto ttH no more than 1 loose bjet
-            event.VetottHMediumB, # vh veto ttH no more than 1 medium bjet
+            # event.VetottHLooseB, # vh veto ttH no more than 1 loose bjet
+            # event.VetottHMediumB, # vh veto ttH no more than 1 medium bjet
             met.MetBasics, # build met vector for calculation
             met.BuildGenMetVector,
             jets.JetCollection,
@@ -664,6 +741,11 @@ def build_config(
             fatjets.LVFatJet1,
         ],
     )
+    
+    # endregion
+    
+    # region vbfhmm producers
+    
     configuration.add_producers(
         "vbfhmm",
         [
@@ -681,11 +763,11 @@ def build_config(
             event.VetoVHElectron,
             event.VetoVHMuon,
             jets.FilterNJets,
-            event.LeadMuonPtCut,
-            event.LeadJetPtCut,
-            event.SubleadJetPtCut,
-            event.DiJetMassCut,
-            event.DiJetEtaCut,
+            # event.LeadMuonPtCut,
+            # event.LeadJetPtCut,
+            # event.SubleadJetPtCut,
+            # event.DiJetMassCut,
+            # event.DiJetEtaCut,
             lepton.LeptonChargeSumVeto,
             ###
             electrons.NumberOfBaseElectrons,
@@ -693,6 +775,8 @@ def build_config(
             ###
             jets.LVJet1,
             jets.LVJet2,
+            jets.LVJet3,
+            
             # flag cut
             event.FilterFlagDiMuFromH,
             event.FilterFlagLepChargeSum,
@@ -739,6 +823,9 @@ def build_config(
 
         ],
     )
+    # endregion
+    
+    # region ["m2m","e2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"] producers
     configuration.add_producers(
         "m2m",
         [
@@ -1152,7 +1239,7 @@ def build_config(
             
             p4.genmet_pt,
             p4.genmet_phi,
-       #    genparticles.dimuon_gen_collection,
+        #   genparticles.dimuon_gen_collection,
         #   genparticles.genMu1_H,
         #   genparticles.genMu2_H,
             p4.genmu1_fromH_pt,
@@ -1239,7 +1326,7 @@ def build_config(
             # p4.genmu2_fromH_eta,
             # p4.genmu2_fromH_phi,
             # p4.genmu2_fromH_mass,
-       #     genparticles.BosonDecayMode,
+            # genparticles.BosonDecayMode,
             p4.fatjet_pt,
             p4.fatjet_eta,
             p4.fatjet_phi,
@@ -1328,6 +1415,91 @@ def build_config(
         ],
     )
 
+    # endregion
+    
+    # region tthmm producers
+    # add by hao
+    
+    configuration.add_producers(
+        "tthmm",
+        [
+            muons.GoodMuons, # vh tighter selections on muons
+            muons.NumberOfGoodMuons,
+           # muons.MuonIDCut,
+            muons.MuonCollection, # collect ordered by pt
+            ###
+            event.Mask_DiMuonPair, # dimuonHiggs index
+            event.Flag_DiMuonFromHiggs,
+            event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
+            ###
+            event.DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
+            # event.LeadJetPtCut,
+            # event.SubleadJetPtCut,
+            # event.DiJetMassCut,
+            # event.DiJetEtaCut,
+            lepton.LeptonChargeSumVeto,
+            ###
+            electrons.NumberOfBaseElectrons,
+            electrons.ElectronCollection,
+            ###
+            jets.LVJet1,
+            jets.LVJet2,
+            jets.LVJet3,
+            # flag cut
+            event.FilterFlagDiMuFromH,
+            ###
+            muons.Mu1_H,
+            muons.Mu2_H,
+            ###
+            event.mumuH_dR,
+            ###
+            event.mu1_mu2_dphi,
+            #
+            muons.LVMu1,
+            muons.LVMu2,
+            triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel, 
+            # vh the trigger-matched muon should have pT > 29 (26) for 2017 (2016,18)
+            
+            #
+            # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
+            p4.mu1_fromH_pt,
+            p4.mu1_fromH_eta,
+            p4.mu1_fromH_phi,
+            p4.mu2_fromH_pt,
+            p4.mu2_fromH_eta,
+            p4.mu2_fromH_phi,
+            p4.met_pt,
+            p4.met_phi,
+            p4.H_pt,
+            p4.H_eta,
+            p4.H_phi,
+            p4.H_mass,
+            p4.jet1_pt,
+            p4.jet1_eta,
+            p4.jet1_phi,
+            p4.jet1_mass,
+            p4.jet2_pt,
+            p4.jet2_eta,
+            p4.jet2_phi,
+            p4.jet2_mass,
+            p4.jet3_pt,
+            p4.jet3_eta,
+            p4.jet3_phi,
+            p4.jet3_mass,
+
+            jets.DiJetMass,
+            jets.DiJetEta,
+            jets.TriJetMass,
+            
+            p4.genmet_pt,
+            p4.genmet_phi,            
+        ]
+    )
+    
+    
+    # endregion
+    
+    # region scopes outputs
     configuration.add_outputs(
         scopes,
         [
@@ -1358,24 +1530,10 @@ def build_config(
             q.genmet_phi,
         ],
     )
-    configuration.add_outputs(
-        ["vbfhmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],
-        [
-            q.mu1_fromH_pt,
-            q.mu1_fromH_eta,
-            q.mu1_fromH_phi,
+    # endregion
 
-            q.mu2_fromH_pt,
-            q.mu2_fromH_eta,
-            q.mu2_fromH_phi,
-            
-            q.H_pt,
-            q.H_eta,
-            q.H_phi,
-            q.H_mass,
-
-        ],
-    )
+    # region vbfhmm outputs
+    
     configuration.add_outputs(
         "vbfhmm",
         [
@@ -1414,6 +1572,32 @@ def build_config(
             # q.iso_wgt_mu_3,
         ],
     )
+    
+    # endregion
+    
+    # region ["vbfhmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"] outputs 
+    configuration.add_outputs(
+        ["vbfhmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],
+        [
+            q.mu1_fromH_pt,
+            q.mu1_fromH_eta,
+            q.mu1_fromH_phi,
+
+            q.mu2_fromH_pt,
+            q.mu2_fromH_eta,
+            q.mu2_fromH_phi,
+            
+            q.H_pt,
+            q.H_eta,
+            q.H_phi,
+            q.H_mass,
+
+        ],
+    )
+    
+    # endregion
+    
+    # region ["m2m","e2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"] outputs
     configuration.add_outputs(
         "m2m",
         [
@@ -1761,6 +1945,46 @@ def build_config(
             q.elemuCR_mass,
         ],
     )
+    # endregion
+    
+    # region tthmm outputs
+    
+    configuration.add_outputs(
+        ["tthmm"],
+        [
+            q.jet1_pt,
+            q.jet1_eta,
+            q.jet1_phi,
+            q.jet1_mass,
+
+            q.jet2_pt,
+            q.jet2_eta,
+            q.jet2_phi,
+            q.jet2_mass,
+            
+            q.jet3_pt,
+            q.jet3_eta,
+            q.jet3_phi,
+            q.jet3_mass,
+
+            q.dijet_mass,
+            q.dijet_eta,
+            
+            q.trijet_mass,
+            
+            q.mumuH_dR,
+
+            q.nmuons,
+            q.nelectrons,
+
+            q.mu1_mu2_dphi,
+            
+	        q.Flag_dimuon_Zmass_veto,
+            q.Flag_LeptonChargeSumVeto,
+            q.Flag_DiMuonFromHiggs,
+            triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel.output_group,
+        ],
+    )
     
     # add genWeight for everything but data
     if sample != "data":
@@ -1793,6 +2017,7 @@ def build_config(
             samples=["data"],
         ),
     )
+    
     configuration.add_modification_rule(
         # scopes,
         ["e2m","m2m","eemm","mmmm","nnmm","fjmm"],

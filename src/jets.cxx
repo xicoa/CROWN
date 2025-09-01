@@ -32,20 +32,23 @@ Calculate_JetMass(ROOT::RDF::RNode df, const std::string &outputname,
                                const ROOT::RVec<float> &particle_phis,
                                const ROOT::RVec<float> &particle_masses,
                                const ROOT::RVec<int> &goodjets_index) {
-                                 std::vector<ROOT::Math::PtEtaPhiMVector> p4;
-                                 for (unsigned int k = 0; k < 2; ++k) {
-                                    try {
-                                        p4.push_back(ROOT::Math::PtEtaPhiMVector(particle_pts.at(goodjets_index[k]), 
-                                                                         particle_etas.at(goodjets_index[k]),
-                                                                         particle_phis.at(goodjets_index[k]),
-                                                                         particle_masses.at(goodjets_index[k])));
-                                    } catch (const std::out_of_range &e) {
-                                        p4.push_back(ROOT::Math::PtEtaPhiMVector(default_float, default_float,default_float, default_float));
-                                    }
-                                 }
-                                 auto dijetsystem = p4[0] + p4[1];
-                                 return dijetsystem.mass();
-                             };
+        std::vector<ROOT::Math::PtEtaPhiMVector> p4;
+        for (unsigned int k = 0; k < 2; ++k) {
+            try {
+                p4.push_back(ROOT::Math::PtEtaPhiMVector(
+                    particle_pts.at(goodjets_index[k]),
+                    particle_etas.at(goodjets_index[k]),
+                    particle_phis.at(goodjets_index[k]),
+                    particle_masses.at(goodjets_index[k])));
+            } catch (const std::out_of_range &e) {
+                p4.push_back(
+                    ROOT::Math::PtEtaPhiMVector(default_float, default_float,
+                                                default_float, default_float));
+            }
+        }
+        auto dijetsystem = p4[0] + p4[1];
+        return dijetsystem.mass();
+    };
     auto df1 = 
         df.Define(outputname, mass_calculation, {particle_pts, particle_etas, particle_phis, particle_masses, goodjets_index});
     return df1;
@@ -59,27 +62,65 @@ Calculate_JetDeltaEta(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &particle_masses,
                                  const std::string &goodjets_index) {
     auto delta_eta_calculation = [](const ROOT::RVec<float> &particle_pts,
-                               const ROOT::RVec<float> &particle_etas,
-                               const ROOT::RVec<float> &particle_phis,
-                               const ROOT::RVec<float> &particle_masses,
-                               const ROOT::RVec<int> &goodjets_index) {
-                                 std::vector<float> etas;
-                                 for (unsigned int k = 0; k < 2; ++k) {
-                                    try {
-                                        etas.push_back(particle_etas.at(goodjets_index[k]));
-                                    } catch (const std::out_of_range &e) {
-                                        etas.push_back(default_float);
-                                    }
-                                 }
-                                 auto delta_eta = abs(etas[0]-etas[1]);
-                                 return delta_eta;
-                             };
+                                    const ROOT::RVec<float> &particle_etas,
+                                    const ROOT::RVec<float> &particle_phis,
+                                    const ROOT::RVec<float> &particle_masses,
+                                    const ROOT::RVec<int> &goodjets_index) {
+        std::vector<float> etas;
+        for (unsigned int k = 0; k < 2; ++k) {
+            try {
+                etas.push_back(particle_etas.at(goodjets_index[k]));
+            } catch (const std::out_of_range &e) {
+                etas.push_back(default_float);
+            }
+        }
+        auto delta_eta = abs(etas[0] - etas[1]);
+        return delta_eta;
+    };
     auto df1 = 
         df.Define(outputname, delta_eta_calculation, {particle_pts, particle_etas, particle_phis, particle_masses, goodjets_index});
     return df1;
 }
 
 ///end write
+
+/// add by hao
+ROOT::RDF::RNode 
+Calculate_TriJetMass(ROOT::RDF::RNode df, const std::string &outputname,
+                                 const std::string &particle_pts,
+                                 const std::string &particle_etas,
+                                 const std::string &particle_phis,
+                                 const std::string &particle_masses,
+                                 const std::string &goodjets_index) {
+    auto mass_calculation = [](const ROOT::RVec<float> &particle_pts,
+                               const ROOT::RVec<float> &particle_etas,
+                               const ROOT::RVec<float> &particle_phis,
+                               const ROOT::RVec<float> &particle_masses,
+                               const ROOT::RVec<int> &goodjets_index) {
+        std::vector<ROOT::Math::PtEtaPhiMVector> p4;
+
+        for (unsigned int k = 0; k < 3; ++k) {
+            try {
+                p4.push_back(ROOT::Math::PtEtaPhiMVector(
+                    particle_pts.at(goodjets_index[k]),
+                    particle_etas.at(goodjets_index[k]),
+                    particle_phis.at(goodjets_index[k]),
+                    particle_masses.at(goodjets_index[k])));
+            } catch (const std::out_of_range &e) {
+                p4.push_back(
+                    ROOT::Math::PtEtaPhiMVector(default_float, default_float,
+                                                default_float, default_float));
+            }
+        }
+        auto dijetsystem = p4[0] + p4[1] + p4[2];
+        return dijetsystem.mass();
+    };
+    auto df1 = 
+        df.Define(outputname, mass_calculation, {particle_pts, particle_etas, particle_phis, particle_masses, goodjets_index});
+    return df1;
+}
+
+/// end
 
 // vhmm extend to N particle overlap removal
 /// Function to veto jets overlapping with particle candidates

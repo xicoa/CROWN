@@ -1538,6 +1538,169 @@ ROOT::RDF::RNode CutVariableBarrelEndcap(
     auto df1 = df.Define(maskname, lambda, {etaColumnName, cutVarColumnName});
     return df1;
 }
+/// Function to select objects with variable dependent threshold for another
+/// given variable 
+///
+/// add by hao
+///
+/// \param[in] df the input dataframe
+/// \param[out] maskname the name of the mask to be added as column to the
+/// \param[in] quantity name of the variable column in the NanoAOD to be select
+/// \param[in] regionvar name of the variable column, in different regionvar,
+/// different upper threshold are applied 
+/// \param[in] thresholdBelow upper threshold applied when regionvar less than
+/// regionThreshold
+/// \param[in] thresholdAbove upper threshold applied when regionvar greater than
+/// regionThreshold
+/// \param[in] regionThreshold seperate regionvar into below and above region
+/// \param[in] absMode compare abs(regionvar) to regionThreshold instead of regionvar
+/// \return a dataframe containing the new mask
+ROOT::RDF::RNode
+CutVarMaxPiecewise(ROOT::RDF::RNode df, const std::string &quantity,
+                   const std::string &regionvar, const std::string &maskname,
+                   const float &thresholdBelow, const float &thresholdAbove,
+                   const float &regionThreshold, const bool absMode) {
+    auto lambda = [&thresholdBelow, &thresholdAbove, &regionThreshold, &absMode](
+                      const ROOT::RVec<float> &q_i, const ROOT::RVec<float> &r_i) {
+        ROOT::RVec<int> mask(q_i.size(), 0);
+        for (size_t i = 0; i < q_i.size(); i++) {
+            float r = absMode ? abs(r_i[i]) : r_i[i];
+            float threshold = thresholdAbove;
+            if (r < regionThreshold) {
+                threshold = thresholdBelow;
+            }
+            if (r < threshold) {
+                mask[i] = 1;
+            }
+        }
+        return mask;
+    };
+    auto df1 = df.Define(maskname, lambda, {quantity, regionvar});
+    return df1;
+}
+
+/// Function to select objects by the quantity of its closest objects, default
+/// value is true
+///
+/// add by hao
+///
+/// \param[in] df the input dataframe
+/// \param[out] maskname the name of the mask to be added as column to the
+/// \param[in] threshold max quantity value
+/// \param[in] quantity name of the variable column in the NanoAOD, which should
+/// be a property of "obj"
+/// 
+/// "this" for the physics objects to be selected, for each, compare quantity of
+/// the closest "obj" to determine weather "this" is good 
+/// \param[in] objEta eta of "obj"
+/// \param[in] objPhi phi of "obj"
+/// \param[in] thisEta eta of "this"
+/// \param[in] thisPhi phi of "this"
+/// \return a dataframe containing the new mask
+ROOT::RDF::RNode
+CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
+                   const std::string &quantity, const std::string &objEta,
+                   const std::string &objPhi, const std::string &thisEta,
+                   const std::string &thisPhi, const float &threshold) {
+    auto lambda = [&threshold](const ROOT::RVec<float> &q,
+                               const ROOT::RVec<float> &oEta,
+                               const ROOT::RVec<float> &oPhi,
+                               const ROOT::RVec<float> &tEta,
+                               const ROOT::RVec<float> &tPhi) {
+        ROOT::RVec<bool> mask(tEta.size(), true);
+        for (size_t i = 0; i < tEta.size(); i++) {
+            float minDR = 1000.0;
+            float closestObjQuantity = -1000.0;
+            for (size_t j = 0; j < oEta.size(); j++) {
+                float dEta = tEta[i] - oEta[j];
+                float dPhi = tPhi[i] - oPhi[j];
+                float deltaRSquare = dEta * dEta + dPhi * dPhi;
+                if (deltaRSquare < minDR) {
+                    minDR = deltaRSquare;
+                    closestObjQuantity = q[j];
+                }
+            }
+            if (closestObjQuantity >= threshold) {
+                mask[i] = false;
+            }
+        }
+        return mask;
+    };
+    
+    auto df1 = df.Define(maskname, lambda,
+                         {quantity, objEta, objPhi, thisEta, thisPhi});
+    return df1;
+}
+
+
+/// Function to select objects by the quantity of its closest objects, in
+/// different region, different max values are used, default value is true. This
+/// function is a combination of CutVarMaxCloestObj and CutVarMaxPiecewise.
+///
+/// add by hao
+///
+/// \param[in] df the input dataframe
+/// \param[out] maskname the name of the mask to be added as column to the
+/// \param[in] quantity name of the variable column in the NanoAOD, which should
+/// be a property of "obj"
+///
+/// "this" for the physics objects to be selected, for each, compare quantity of
+/// the closest "obj" to determine weather "this" is good
+/// \param[in] objEta eta of "obj"
+/// \param[in] objPhi phi of "obj"
+/// \param[in] thisEta eta of "this"
+/// \param[in] thisPhi phi of "this"
+/// \param[in] regionvar name of the variable column, in different regionvar,
+/// different upper threshold are applied 
+/// \param[in] thresholdBelow upper threshold applied when regionvar less than
+/// regionThreshold
+/// \param[in] thresholdAbove upper threshold applied when regionvar greater than
+/// regionThreshold
+/// \param[in] regionThreshold seperate regionvar into below and above region
+/// \param[in] absMode compare abs(regionvar) to regionThreshold instead of regionvar
+/// \return a dataframe containing the new mask
+ROOT::RDF::RNode CutVarMaxCloestObjPiecewise(
+    ROOT::RDF::RNode df, const std::string &maskname,
+    const std::string &quantity, const std::string &objEta,
+    const std::string &objPhi, const std::string &thisEta,
+    const std::string &thisPhi, const std::string &regionvar,
+    const float &thresholdBelow, const float &thresholdAbove,
+    const float &regionThreshold, const bool absMode) {
+    auto lambda =
+        [&thresholdBelow, &thresholdAbove, &regionThreshold,
+         &absMode](const ROOT::RVec<float> &oEta, const ROOT::RVec<float> &oPhi,
+                   const ROOT::RVec<float> &tEta, const ROOT::RVec<float> &tPhi,
+                   const ROOT::RVec<float> &q_i, const ROOT::RVec<float> &r_i) {
+            ROOT::RVec<bool> mask(tEta.size(), true);
+            for (size_t i = 0; i < tEta.size(); i++) {
+                float minDR = 1000.0;
+                float closestObjQuantity = -1000.0;
+                for (size_t j = 0; j < oEta.size(); j++) {
+                    float dEta = tEta[i] - oEta[j];
+                    float dPhi = tPhi[i] - oPhi[j];
+                    float deltaRSquare = dEta * dEta + dPhi * dPhi;
+                    if (deltaRSquare < minDR) {
+                        minDR = deltaRSquare;
+                        closestObjQuantity = q_i[j];
+                    }
+                }
+                float r = absMode ? r_i[i] : abs(r_i[i]);
+                float threshold = thresholdAbove;
+                if (r < regionThreshold) {
+                    threshold = thresholdBelow;
+                }
+                if (closestObjQuantity >= threshold) {
+                    mask[i] = false;
+                }
+            }
+            return mask;
+        };
+    auto df1 =
+        df.Define(maskname, lambda,
+                  {objEta, objPhi, thisEta, thisPhi, quantity, regionvar});
+    return df1;
+}
+
 
 /// Function to take a mask and create a new one where a particle candidate is
 /// set to false
