@@ -255,6 +255,9 @@ class Producer:
             + '", "'.join([x.get_leaf(shift, scope) for x in self.input[scope]])
             + '"'
         )
+        # add this two line to support "input_i" format in product
+        for i, x in enumerate(self.input[scope]):
+            config[shift][f"input_{i}"] = x.get_leaf(shift, scope)
         config[shift]["input_vec"] = (
             '{"'
             + '","'.join([x.get_leaf(shift, scope) for x in self.input[scope]])

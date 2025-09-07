@@ -62,6 +62,13 @@ is_gghmm = Producer(
     output=[q.is_gghmm],
     scopes=["global"],
 )
+is_tthmm = Producer(
+    name="is_tthmm",
+    call="basefunctions::DefineQuantity({df}, {output}, {is_tthmm})",
+    input=[],
+    output=[q.is_tthmm],
+    scopes=["global"],
+)
 is_zjjew = Producer(
     name="is_zjjew",
     call="basefunctions::DefineQuantity({df}, {output}, {is_zjjew})",
@@ -130,6 +137,7 @@ SampleFlags = ProducerGroup(
         is_triboson,
         is_vbfhmm,
         is_gghmm,
+        is_tthmm,
     ],
 )
 
@@ -429,10 +437,10 @@ VetoVHElectron = Producer(
 # ttH
 FilterNBjet_ttH = Producer(
     name="FilterNBjet_ttH",
-    call='basefunctions::Filter({df}, "({nbjets_loose} >= {ttH_min_nbjets_loose}) || ({nbjets_medium} >= {ttH_min_nbjets_medium})", "ttH loose b-jet >= 2 or medium b-jet >= 1")',
+    call='basefunctions::Filter({df}, "({input_0} >= {ttH_min_nbjets_loose}) || ({input_1} >= {ttH_min_nbjets_medium})")',
     input=[q.nbjets_loose,q.nbjets_medium],
     output=None,
-    scopes=["tthmm"]
+    scopes=["global","tthmm"]
 )
 
 # write by botao

@@ -6,6 +6,7 @@
 #include "../include/basefunctions.hxx"
 #include "../include/utility/Logger.hxx"
 #include "../include/utility/utility.hxx"
+#include "ROOT/RDF/InterfaceUtils.hxx"
 #include "ROOT/RDFHelpers.hxx"
 #include "ROOT/RDataFrame.hxx"
 #include "TRandom3.h"
@@ -85,6 +86,66 @@ ROOT::RDF::RNode M_dileptonMass(ROOT::RDF::RNode df, const std::string &outputna
                                  }
                              };
     // std::vector<std::string> column_names = {particle_pts, particle_etas, particle_phis, particle_masses, muon_size};
+    auto df1 = 
+        df.Define(outputname, mass_calculation, {particle_pts, particle_etas, particle_phis, particle_masses, particle_charges, goodmuons_index});
+    return df1;
+}
+
+/// function to select the smallest mass of dilepton pair
+ROOT::RDF::RNode dileptonMassClosest(
+    ROOT::RDF::RNode df, const std::string &outputname,
+    const std::string &particle_pts, const std::string &particle_etas,
+    const std::string &particle_phis, const std::string &particle_masses,
+    const std::string &particle_charges, const std::string &goodmuons_index,
+    const float &targetMass) {
+    auto mass_calculation = [&targetMass](
+                                const ROOT::RVec<float> &particle_pts,
+                                const ROOT::RVec<float> &particle_etas,
+                                const ROOT::RVec<float> &particle_phis,
+                                const ROOT::RVec<float> &particle_masses,
+                                const ROOT::RVec<int> &particle_charges,
+                                const ROOT::RVec<int> &goodmuons_index) {
+        std::vector<ROOT::Math::PtEtaPhiMVector> p4;
+        for (unsigned int k = 0; k < (int)goodmuons_index.size(); ++k) {
+            try {
+                p4.push_back(ROOT::Math::PtEtaPhiMVector(
+                    particle_pts.at(goodmuons_index[k]),
+                    particle_etas.at(goodmuons_index[k]),
+                    particle_phis.at(goodmuons_index[k]),
+                    particle_masses.at(goodmuons_index[k])));
+            } catch (const std::out_of_range &e) {
+                p4.push_back(
+                    ROOT::Math::PtEtaPhiMVector(default_float, default_float,
+                                                default_float, default_float));
+            }
+        }
+        std::vector<ROOT::Math::PtEtaPhiMVector> p4_1;
+        std::vector<ROOT::Math::PtEtaPhiMVector> p4_2;
+        p4_1 = p4;
+        p4_2 = p4;
+        std::vector<float> masses;
+        for (unsigned int i = 0; i < p4_1.size(); ++i) {
+            for (unsigned int j = i + 1; j < p4_2.size(); ++j) {
+                if (p4_1[i].pt() < 0.0 || p4_2[j].pt() < 0.0) {
+                    continue;
+                }
+                if (particle_charges[goodmuons_index[i]] +
+                        particle_charges[goodmuons_index[j]] !=
+                    0){
+                    continue;
+                }
+                auto dileptonsystem = p4_1[i] + p4_2[j];
+                masses.push_back(((float)dileptonsystem.mass() - targetMass));
+            }
+        }
+        auto sortByAbs = [](float a, float b) { return abs(a) < abs(b); };
+        std::sort(masses.begin(), masses.end(), sortByAbs);
+        if (masses.size() <= 0) {
+            return 999.0f;
+        } else {
+            return masses[0];
+        }
+    };
     auto df1 = 
         df.Define(outputname, mass_calculation, {particle_pts, particle_etas, particle_phis, particle_masses, particle_charges, goodmuons_index});
     return df1;
@@ -1022,10 +1083,14 @@ ROOT::RDF::RNode HiggsCandDiMuonGenPairCollection(ROOT::RDF::RNode df, const std
 }
 ///
 /// function to find the Vector Boson decay
-ROOT::RDF::RNode BosonDecayMode(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &GenPart_pdgId,
-                                 const std::string &GenPart_motherid,
-                                 const std::string &GenPart_statusFlags) {
+ROOT::RDF::RNode BosonDecayMode(ROOT::RDF::RNode df,
+                                const std::string &outputname,
+                                const std::string &GenPart_pdgId,
+                                const std::string &GenPart_motherid,
+                                const std::string &GenPart_statusFlags) {
+    throw("Exception in physicsobjects.cxx: BosonDecayMode. Check this "
+          "function's conditions, & has lower precedence than ==; == will be "
+          "evaluated first.");
     auto DecayMode = [](const ROOT::RVec<int> &GenPart_pdgId,
                         const ROOT::RVec<int> &GenPart_motherid,
                         const ROOT::RVec<int> &GenPart_statusFlags) {
@@ -1434,11 +1499,35 @@ ROOT::RDF::RNode CutVarMin(ROOT::RDF::RNode df, const std::string &quantity,
 ///
 /// \return a dataframe containing the new mask
 ROOT::RDF::RNode CutVarMax(ROOT::RDF::RNode df, const std::string &quantity,
-                       const std::string &maskname, const float &threshold) {
+                           const std::string &maskname,
+                           const float &threshold) {
+    
     auto df1 =
         df.Define(maskname, basefunctions::FilterMax(threshold), {quantity});
     return df1;
 }
+
+/// Function to select objects below a threshold on a variable
+/// 
+/// \param[in] df the input dataframe
+/// \param[in] quantity name of the variable column in the NanoAOD
+/// \param[out] maskname the name of the mask to be added as column to the
+/// dataframe \param[in] the upper threshold on the variable
+///
+/// \return a dataframe containing the new mask
+ROOT::RDF::RNode CutVarMaxUChar(ROOT::RDF::RNode df,
+                                const std::string &quantity,
+                                const std::string &maskname,
+                                const unsigned char &threshold) {
+    auto lambda =
+        [threshold](const ROOT::RVec<unsigned char> &values) {
+            ROOT::RVec<int> mask = values < threshold;
+            return mask;
+        };
+    return df.Define(maskname, lambda, {quantity});
+}
+
+
 /// [end] a couple of general functions added in developing vhmm analysis
 
 /// Function to select objects above a pt threshold, using
@@ -1598,7 +1687,7 @@ CutVarMaxPiecewise(ROOT::RDF::RNode df, const std::string &quantity,
 /// \param[in] thisPhi phi of "this"
 /// \return a dataframe containing the new mask
 ROOT::RDF::RNode
-CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
+CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
                    const std::string &quantity, const std::string &objEta,
                    const std::string &objPhi, const std::string &thisEta,
                    const std::string &thisPhi, const float &threshold) {
@@ -1607,7 +1696,7 @@ CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
                                const ROOT::RVec<float> &oPhi,
                                const ROOT::RVec<float> &tEta,
                                const ROOT::RVec<float> &tPhi) {
-        ROOT::RVec<bool> mask(tEta.size(), true);
+        ROOT::RVec<int> mask(tEta.size(), 1);
         for (size_t i = 0; i < tEta.size(); i++) {
             float minDR = 1000.0;
             float closestObjQuantity = -1000.0;
@@ -1621,7 +1710,7 @@ CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
                 }
             }
             if (closestObjQuantity >= threshold) {
-                mask[i] = false;
+                mask[i] = 0;
             }
         }
         return mask;
@@ -1659,7 +1748,7 @@ CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
 /// \param[in] regionThreshold seperate regionvar into below and above region
 /// \param[in] absMode compare abs(regionvar) to regionThreshold instead of regionvar
 /// \return a dataframe containing the new mask
-ROOT::RDF::RNode CutVarMaxCloestObjPiecewise(
+ROOT::RDF::RNode CutVarMaxClosestObjPiecewise(
     ROOT::RDF::RNode df, const std::string &maskname,
     const std::string &quantity, const std::string &objEta,
     const std::string &objPhi, const std::string &thisEta,
@@ -1671,7 +1760,10 @@ ROOT::RDF::RNode CutVarMaxCloestObjPiecewise(
          &absMode](const ROOT::RVec<float> &oEta, const ROOT::RVec<float> &oPhi,
                    const ROOT::RVec<float> &tEta, const ROOT::RVec<float> &tPhi,
                    const ROOT::RVec<float> &q_i, const ROOT::RVec<float> &r_i) {
-            ROOT::RVec<bool> mask(tEta.size(), true);
+            ROOT::RVec<int> mask(tEta.size(), 1);
+            Logger::get("CutVarMaxClosestObjPiecewise")
+                ->debug("this Eta has size {}, obj Eta has size {}.",
+                        tEta.size(), oEta.size());
             for (size_t i = 0; i < tEta.size(); i++) {
                 float minDR = 1000.0;
                 float closestObjQuantity = -1000.0;
@@ -1690,9 +1782,11 @@ ROOT::RDF::RNode CutVarMaxCloestObjPiecewise(
                     threshold = thresholdBelow;
                 }
                 if (closestObjQuantity >= threshold) {
-                    mask[i] = false;
+                    mask[i] = 0;
                 }
             }
+            Logger::get("CutVarMaxClosestObjPiecewise")
+                ->debug("this mask has size {}.", mask.size());
             return mask;
         };
     auto df1 =

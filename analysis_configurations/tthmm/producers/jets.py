@@ -279,8 +279,6 @@ Jet2_qgl = Producer(
     output=[q.jet2_qgl],
     scopes=["vbfhmm"],
 )
-###ah
-# jet collection
 JetCollection = Producer(
     name="JetCollection",
     call="jet::OrderJetsByPt({df}, {output}, {input})",

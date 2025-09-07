@@ -11,7 +11,7 @@ Muon_pTErr_1 = Producer(
     call="quantities::ptErr({df}, {output}, 0, {input})",
     input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_ptErr],
     output=[q.mu1_fromH_ptErr],
-    scopes=["vbfhmm"],
+    scopes=["vbfhmm","tthmm"],
 )
 
 Muon_pTErr_2 = Producer(
@@ -19,7 +19,7 @@ Muon_pTErr_2 = Producer(
     call="quantities::ptErr({df}, {output}, 1, {input})",
     input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_ptErr],
     output=[q.mu2_fromH_ptErr],
-    scopes=["vbfhmm"],
+    scopes=["vbfhmm","tthmm"],
 )
 
 MuonPtCut = Producer(
@@ -89,7 +89,7 @@ MuonMiniIsoCut = Producer(
 )
 MuonDeepCSVClosestCut = Producer(
     name="MuonDeepCSVClosestCut",
-    call="physicsobject::CutVarMaxCloestObjPiecewise({df}, {output}, {input}, {max_muon_deepCSVClosest_barrel}, {max_muon_deepCSVClosest_endcap}, {threshold_barrel_endcap}, 1)",
+    call="physicsobject::CutVarMaxClosestObjPiecewise({df}, {output}, {input}, {max_muon_deepCSVClosest_barrel}, {max_muon_deepCSVClosest_endcap}, {threshold_barrel_endcap}, 1)",
     input=[nanoAOD.Jet_btagDeepB,
            nanoAOD.Jet_eta,
            nanoAOD.Jet_phi,
@@ -157,8 +157,7 @@ GoodMuonIDCut = Producer(
 ###
 GoodMuonIsoCut = Producer(
     name="GoodMuonIsoCut",
-    #call="physicsobject::electron::CutIsolation({df}, {output}, {input}, {muon_iso_cut})",
-    call="physicsobject::muon::CutIsolation({df}, {output}, {input}, {muon_iso_cut})",
+    call="physicsobject::electron::CutIsolation({df}, {output}, {input}, {muon_iso_cut})",
     input=[nanoAOD.Muon_pfRelIso04_all],
     #input=[nanoAOD.Muon_miniPFRelIso_all],
     output=[],

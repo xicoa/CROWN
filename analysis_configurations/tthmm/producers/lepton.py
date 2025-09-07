@@ -18,7 +18,7 @@ CalcSmallestDiMuonMass = Producer(
            nanoAOD.Muon_charge,
            q.good_muon_collection],
     output=[q.smallest_dimuon_mass],
-    scopes=["global","m2m","e2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol"],
+    scopes=["global","tthmm"],
 )
 CalcSmallestDiElectronMass = Producer(
     name="CalcSmallestDiElectronMass",
@@ -30,7 +30,32 @@ CalcSmallestDiElectronMass = Producer(
            nanoAOD.Electron_charge,
            q.base_electron_collection],
     output=[q.smallest_dielectron_mass],
-    scopes=["global","eemm"],
+    scopes=["global","tthmm"],
+)
+# find m_ll closest to a given value
+DiMuonMassClosestToZMass = Producer(
+    name="DiMuonMassClosestToZMass",
+    call='physicsobject::dileptonMassClosest({df}, {output}, {input}, {Z_mass_veto})',
+    input=[nanoAOD.Muon_pt,
+           nanoAOD.Muon_eta, 
+           nanoAOD.Muon_phi, 
+           nanoAOD.Muon_mass,
+           nanoAOD.Muon_charge,
+           q.good_muon_collection],
+    output=[q.dimuon_mass_closest_to_Zmass],
+    scopes=["global","tthmm"],
+)
+DiElectronMassClosestToZMass = Producer(
+    name="DiElectronMassClosestToZMass",
+    call='physicsobject::dileptonMassClosest({df}, {output}, {input}, {Z_mass_veto})',
+    input=[nanoAOD.Electron_pt,
+           nanoAOD.Electron_eta, 
+           nanoAOD.Electron_phi, 
+           nanoAOD.Electron_mass,
+           nanoAOD.Electron_charge,
+           q.base_electron_collection],
+    output=[q.dielectron_mass_closest_to_Zmass],
+    scopes=["global","tthmm"],
 )
 LeptonChargeSumVeto = Producer(
     name="LeptonChargeSumVeto",
@@ -48,7 +73,7 @@ LeptonChargeSumVeto_elemu = Producer(
            q.good_muon_collection,
            q.base_electron_collection],
     output=[q.Flag_LeptonChargeSumVeto],   # 1 stands pm1, 2 stands 0, 0 stands others
-    scopes=["global","e2m","eemm","nnmm_topcontrol"],
+    scopes=["global","tthmm","e2m","eemm","nnmm_topcontrol"],
 )
 ### extra lepton (muon) in m2m channel
 Mu1_W_m2m_index = Producer(

@@ -2,7 +2,6 @@
 *test*/
 build*/
 build/
-build*/
 log/
 logs/
 condor/
@@ -11,7 +10,14 @@ vbfhmm/
 hmm_origin/
 .cache*/
 .cache/
+
+# Files
+commands
+
+# Clangd
 .clangd
+include/Common.h
+
 # Doxygen Documentation
 docs/doxygen
 

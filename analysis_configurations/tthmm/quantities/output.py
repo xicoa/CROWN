@@ -230,6 +230,8 @@ iso_wgt_mu_4 = Quantity("iso_wgt_mu_4")
 # write by botao
 smallest_dimuon_mass = Quantity("smallest_dimuon_mass")
 smallest_dielectron_mass = Quantity("smallest_dielectron_mass")
+dimuon_mass_closest_to_Zmass = Quantity("dimuon_mass_closest_to_Zmass")
+dielectron_mass_closest_to_Zmass = Quantity("dielectron_mass_closest_to_Zmass")
 dimuon_p4_byPt = Quantity("dimuon_p4_byPt")
 Flag_dimuon_Zmass_veto = Quantity("Flag_dimuon_Zmass_veto")
 Flag_LeptonChargeSumVeto = Quantity("Flag_LeptonChargeSumVeto")
@@ -242,6 +244,7 @@ dimuon_HiggsCand_collection = Quantity("dimuon_HiggsCand_collection")
 #jiahua
 is_vbfhmm = Quantity("is_vbfhmm")
 is_gghmm = Quantity("is_gghmm")
+is_tthmm = Quantity("is_tthmm")
 # e2m
 base_electron_collection = Quantity("base_electron_collection")
 dielectron_ZCand_collection = Quantity("dielectron_ZCand_collection")

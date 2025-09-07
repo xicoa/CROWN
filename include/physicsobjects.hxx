@@ -3,13 +3,17 @@
 
 namespace physicsobject {
 /// write by botao
-ROOT::RDF::RNode M_dileptonMass(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &particle_pts,
-                                 const std::string &particle_etas,
-                                 const std::string &particle_phis,
-                                 const std::string &particle_masses,
-                                 const std::string &particle_charges,
-                                 const std::string &goodmuons_index);
+ROOT::RDF::RNode M_dileptonMass(
+    ROOT::RDF::RNode df, const std::string &outputname,
+    const std::string &particle_pts, const std::string &particle_etas,
+    const std::string &particle_phis, const std::string &particle_masses,
+    const std::string &particle_charges, const std::string &goodmuons_index);
+ROOT::RDF::RNode dileptonMassClosest(
+    ROOT::RDF::RNode df, const std::string &outputname,
+    const std::string &particle_pts, const std::string &particle_etas,
+    const std::string &particle_phis, const std::string &particle_masses,
+    const std::string &particle_charges, const std::string &goodmuons_index,
+    const float &targetMass);
 ROOT::RDF::RNode ECalGapVeto(ROOT::RDF::RNode df, const std::string &etaColumnName,
                               const std::string &maskname,
                               const float &etaBoundary,
@@ -195,9 +199,13 @@ ROOT::RDF::RNode LeadingFatJetVar(ROOT::RDF::RNode df, const std::string &output
 //                                  const std::string &outputname);
 ///
 ROOT::RDF::RNode CutVarMin(ROOT::RDF::RNode df, const std::string &quantity,
-                       const std::string &maskname, const float &threshold);
+                           const std::string &maskname, const float &threshold);
 ROOT::RDF::RNode CutVarMax(ROOT::RDF::RNode df, const std::string &quantity,
-                       const std::string &maskname, const float &threshold);
+                           const std::string &maskname, const float &threshold);
+ROOT::RDF::RNode CutVarMaxUChar(ROOT::RDF::RNode df,
+                                const std::string &quantity,
+                                const std::string &maskname,
+                                const unsigned char &threshold);
 ROOT::RDF::RNode CutPt(ROOT::RDF::RNode df, const std::string &quantity,
                        const std::string &maskname, const float &ptThreshold);
 ROOT::RDF::RNode CutEta(ROOT::RDF::RNode df, const std::string &quantity,
@@ -228,18 +236,22 @@ template <class... Masks>
 inline ROOT::RDF::RNode CombineMasks(ROOT::RDF::RNode df,
                                      const std::string &maskname,
                                      const Masks &...masks) {
-    auto multiplyMasks = [](const ROOT::RVec<ROOT::RVec<int>> &x) {
-        ROOT::RVec<int> result(x[0].size(), 1);
-        for (auto &xx : x) {
-            result *= xx;
-        }
-        return result;
-    };
     // std::vector<std::string> MaskList{{masks...}}; does weird things in case
     // of two arguments in masks
     std::vector<std::string> MaskList;
     utility::appendParameterPackToVector(MaskList, masks...);
     const auto nMasks = sizeof...(Masks);
+    auto multiplyMasks = [maskname](const ROOT::RVec<ROOT::RVec<int>> &x) {
+        Logger::get("CombineMasks")
+                ->debug("Creating mask named {}", maskname);
+        ROOT::RVec<int> result(x[0].size(), 1);
+        for (int i = 0; i < x.size(); i++) {
+            Logger::get("CombineMasks")
+                ->debug("Mask {} has size {}", i, x[i].size());
+            result *= x[i];
+        }
+        return result;
+    };
     return df.Define(
         maskname, ROOT::RDF::PassAsVec<nMasks, ROOT::RVec<int>>(multiplyMasks),
         MaskList);
@@ -281,11 +293,11 @@ CutVarMaxPiecewise(ROOT::RDF::RNode df, const std::string &quantity,
                    const float &thresholdBelow, const float &thresholdAbove,
                    const float &regionThreshold, const bool absMode);
 ROOT::RDF::RNode
-CutVarMaxCloestObj(ROOT::RDF::RNode df, const std::string &maskname,
+CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
                    const std::string &quantity, const std::string &objEta,
                    const std::string &objPhi, const std::string &thisEta,
                    const std::string &thisPhi, const float &threshold);
-ROOT::RDF::RNode CutVarMaxCloestObjPiecewise(
+ROOT::RDF::RNode CutVarMaxClosestObjPiecewise(
     ROOT::RDF::RNode df, const std::string &maskname,
     const std::string &quantity, const std::string &objEta,
     const std::string &objPhi, const std::string &thisEta,

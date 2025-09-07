@@ -31,6 +31,24 @@ inline ROOT::RDF::RNode FilterThreshold(ROOT::RDF::RNode df,
     return df.Filter( quantity + " " + relation + " " + std::to_string(threshold), filtername);
 }
 
+// clang-format off
+///
+/// totally Filter function in dataframe
+///
+/// \param df the input dataframe
+/// \param filterExpression expression for filter, eg. ( a > 1 ) || ( b > 2 && c < 3 )
+/// where a, b, c are branch name in the dataframe
+/// \returns a filtered dataframe
+/// 
+/// Maybe you can use "input_i" format in Producer init. See FilterNBjet_ttH in event.py.
+/// This feature isn't supported by the origin CROWN frame.
+/// 
+// clang-format on
+inline ROOT::RDF::RNode Filter(ROOT::RDF::RNode df,
+                               const std::string &filterExpression) {
+    return df.Filter(filterExpression);
+}
+
 /**
  * @brief Function to filter events based on their run and luminosity block
  * values

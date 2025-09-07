@@ -71,7 +71,7 @@ ElectronConvVeto = Producer(
 )
 ElectronMissingHitsCut = Producer(
     name="ElectronMissingHitsCut",
-    call="physicsobject::CutVarMax({df}, {input}, {output}, {ele_missing_hits})",
+    call="physicsobject::CutVarMaxUChar({df}, {input}, {output}, {ele_missing_hits})",
     input=[nanoAOD.Electron_lostHits],
     output=[],
     scopes=["global"],
@@ -83,7 +83,7 @@ ElectronMissingHitsCut = Producer(
 ElectronMiniIsoCut = Producer(
     name="ElectronMiniIsoCut",
     call="physicsobject::CutVarMax({df}, {input}, {output}, {ele_mini_iso_cut})",
-    input=[nanoAOD.Muon_miniPFRelIso_all],
+    input=[nanoAOD.Electron_miniPFRelIso_all],
     output=[],
     scopes=["global","tthmm"],
 )
@@ -117,7 +117,7 @@ ElectronEInvMinusPInvCutMin = Producer(
 )
 ElectronDeepCSVClosestCut = Producer(
     name="ElectronDeepCSVClosestCut",
-    call="physicsobject::CutVarMaxCloestObjPiecewise({df}, {output}, {input}, {max_ele_deepCSVClosest_barrel}, {max_ele_deepCSVClosest_endcap}, {threshold_barrel_endcap}, 1)",
+    call="physicsobject::CutVarMaxClosestObjPiecewise({df}, {output}, {input}, {max_ele_deepCSVClosest_barrel}, {max_ele_deepCSVClosest_endcap}, {threshold_barrel_endcap}, 1)",
     input=[nanoAOD.Jet_btagDeepB,
            nanoAOD.Jet_eta,
            nanoAOD.Jet_phi,

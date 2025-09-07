@@ -35,15 +35,15 @@ mu1_fromH_phi = Producer(
     output=[q.mu1_fromH_phi],
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],
 )
-# mu1_fromH_mass = Producer(
-#     name="mu1_fromH_mass",
-#     call='quantities::mass({df}, {output}, {input})',
-#     input=[
-#       q.muon_leadingp4_H,
-#     ],
-#     output=[q.mu1_fromH_mass],
-#     scopes=["e2m","m2m","eemm","mmmm","nnmm"],
-# )
+mu1_fromH_mass = Producer(
+    name="mu1_fromH_mass",
+    call='quantities::mass({df}, {output}, {input})',
+    input=[
+      q.muon_leadingp4_H,
+    ],
+    output=[q.mu1_fromH_mass],
+    scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],
+)
 
 ##### for mu2 from Higgs
 #####
@@ -74,15 +74,15 @@ mu2_fromH_phi = Producer(
     output=[q.mu2_fromH_phi],
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],
 )
-# mu2_fromH_mass = Producer(
-#     name="mu2_fromH_mass",
-#     call='quantities::mass({df}, {output}, {input})',
-#     input=[
-#       q.muon_subleadingp4_H,
-#     ],
-#     output=[q.mu2_fromH_mass],
-#     scopes=["e2m","m2m","eemm","mmmm","nnmm"],
-# )
+mu2_fromH_mass = Producer(
+    name="mu2_fromH_mass",
+    call='quantities::mass({df}, {output}, {input})',
+    input=[
+      q.muon_subleadingp4_H,
+    ],
+    output=[q.mu2_fromH_mass],
+    scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],
+)
 
 ##### Higgs 
 #####
