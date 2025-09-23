@@ -579,34 +579,25 @@ DielectronMinMassCut = Producer(
 #
 Flag_DiMuonFromHiggs = Producer(
     name="Flag_DiMuonFromHiggs",
-    call='physicsobject::DiMuonFromHiggs({df}, {output}, {input})',
+    call='physicsobject::DiMuonFromHiggsFlag({df}, {output}, {input})',
     input=[q.dimuon_HiggsCand_collection],
     output=[q.Flag_DiMuonFromHiggs],
     scopes=["global","vbfhmm","tthmm"],
 )
-### need a collection that di_ele after cut
-Flag_DiEleFromZ = Producer(
-    name="Flag_DiEleFromZ",
-    call='physicsobject::DiEleFromZ({df}, {output}, {input})',
-    input=[q.dielectron_ZCand_collection], # in eemm, dielectron_ZCand_collection need to be 2
-    output=[q.Flag_DiEleFromZ],
-    scopes=["global","eemm"],
-)
-###
 HiggsToDiMuonPair_p4 = Producer(
     name="HiggsToDiMuonPair_p4",
-    call='physicsobject::HiggsToDiMuonPairCollection({df}, {output}, {input})',
+    call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
            nanoAOD.Muon_phi, 
            nanoAOD.Muon_mass,
            q.dimuon_HiggsCand_collection],
     output=[q.dimuon_p4_Higgs],
-    scopes=["global","gghmm","vbfhmm","tthmm","e2m","m2m","eemm","nnmm","fjmm"],
+    scopes=["global","gghmm","vbfhmm","tthmm"],
 )
 HiggsToDiMuonPair_p4_4m = Producer(
     name="HiggsToDiMuonPair_p4_4m",
-    call='physicsobject::HiggsToDiMuonPairCollection({df}, {output}, {input})',
+    call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
            nanoAOD.Muon_phi, 
@@ -623,23 +614,35 @@ ZToDiMuonPair_p4_4m = Producer(
            nanoAOD.Muon_phi, 
            nanoAOD.Muon_mass,
            q.quadmuon_HiggsZCand_collection],
-    output=[q.dilepton_p4_Z],
+    output=[q.dimuon_Z_p4],
     scopes=["mmmm"],
 )
 ZToDiElectronPair_p4 = Producer(
     name="ZToDiElectronPair_p4",
-    call='physicsobject::ZToDiElectronPairCollection({df}, {output}, {input})',
+    call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
+    input=[nanoAOD.Electron_pt,
+           nanoAOD.Electron_eta,
+           nanoAOD.Electron_phi, 
+           nanoAOD.Electron_mass,
+           q.dielectron_ZCand_collection],
+    output=[q.dielectron_Z_p4],
+    scopes=["global"],
+)
+Flag_DiElectronMassFromZVeto = Producer(
+    name="Flag_DiElectronMassFromZVeto",
+    call='physicsobject::DiLeptonFromZVetoFlag({df}, {output}, {input})',
     input=[nanoAOD.Electron_pt,
            nanoAOD.Electron_eta, 
            nanoAOD.Electron_phi, 
            nanoAOD.Electron_mass,
-           q.dielectron_ZCand_collection],
-    output=[q.dilepton_p4_Z],
-    scopes=["global","e2m","m2m","eemm","mmmm"],
+           nanoAOD.Electron_charge,
+           q.base_electron_collection],
+    output=[q.Flag_dielectron_Zmass_veto], # 1 stands for noZmass, 0 stands for has dimuon from Zmass
+    scopes=["global","vbfhmm","gghmm","tthmm","m2m","eemm","mmmm"],
 )
-DiMuonMassFromZVeto = Producer(
-    name="DiMuonMassFromZVeto",
-    call='physicsobject::DiMuonFromZVeto({df}, {output}, {input})',
+Flag_DiMuonMassFromZVeto = Producer(
+    name="Flag_DiMuonMassFromZVeto",
+    call='physicsobject::DiLeptonFromZVetoFlag({df}, {output}, {input})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
            nanoAOD.Muon_phi, 
@@ -649,8 +652,8 @@ DiMuonMassFromZVeto = Producer(
     output=[q.Flag_dimuon_Zmass_veto], # 1 stands for noZmass, 0 stands for has dimuon from Zmass
     scopes=["global","vbfhmm","gghmm","tthmm","m2m","eemm","mmmm"],
 )
-Mask_DiMuonPair = Producer(
-    name="Mask_DiMuonPair",
+DiMuonHiggsCandCollection = Producer(
+    name="DiMuonHiggsCandCollection",
     call='physicsobject::HiggsCandDiMuonPairCollection({df}, {output}, {input})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
@@ -658,11 +661,11 @@ Mask_DiMuonPair = Producer(
            nanoAOD.Muon_mass,
            nanoAOD.Muon_charge,
            q.good_muon_collection],
-    output=[q.dimuon_HiggsCand_collection], # index about the two selected muons may from Higgs
+    output=[q.dimuon_HiggsCand_collection],
     scopes=["global","gghmm","vbfhmm","tthmm","e2m","m2m","eemm","nnmm","fjmm"],
 )
-Mask_DiElectronPair = Producer(
-    name="Mask_DiElectronPair",
+DiElectronZCand = Producer(
+    name="DiElectronZCand",
     call='physicsobject::ZCandDiElectronPairCollection({df}, {output}, {input})',
     input=[nanoAOD.Electron_pt,
            nanoAOD.Electron_eta,
@@ -671,7 +674,7 @@ Mask_DiElectronPair = Producer(
            nanoAOD.Electron_charge,
            q.base_electron_collection],
     output=[q.dielectron_ZCand_collection], # index about the two selected electrons may from Z boson
-    scopes=["eemm"],
+    scopes=["global","tthmm"],
 )
 # output: index about the four muons, first two stand HiggsCand, second two stand ZCand
 Mask_QuadMuonPair = Producer(
@@ -693,16 +696,16 @@ Flag_ZZVeto = Producer(
     output=[q.Flag_ZZVeto], # 0 stands two Z Cand
     scopes=["mmmm"],
 )
-lepton_H_dR = Producer(
-    name="lepton_H_dR",
-    call='quantities::deltaR({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.dimuon_p4_Higgs,
-    ],
-    output=[q.lep_H_dR],
-    scopes=["e2m","m2m"],
-)
+# lepton_H_dR = Producer(
+#     name="lepton_H_dR",
+#     call='quantities::deltaR({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.dimuon_p4_Higgs,
+#     ],
+#     output=[q.lep_H_dR],
+#     scopes=["e2m","m2m"],
+# )
 mumuH_dR = Producer(
     name="mumuH_dR",
     call='quantities::deltaR({df}, {output}, {input})',
@@ -780,61 +783,61 @@ muOSwithMuonW_p4 = Producer(
     scopes=["m2m"],
 )
 ### dR lepW and muSS
-lepton_muSS_dR = Producer(
-    name="lepton_muSS_dR",
-    call='quantities::deltaR({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.mu_p4_SSwithLep,
-    ],
-    output=[q.lep_muSS_dR],
-    scopes=["e2m","m2m"],
-)
+# lepton_muSS_dR = Producer(
+#     name="lepton_muSS_dR",
+#     call='quantities::deltaR({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.mu_p4_SSwithLep,
+#     ],
+#     output=[q.lep_muSS_dR],
+#     scopes=["e2m","m2m"],
+# )
 ### dR lepW and muOS
-lepton_muOS_dR = Producer(
-    name="lepton_muOS_dR",
-    call='quantities::deltaR({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.mu_p4_OSwithLep,
-    ],
-    output=[q.lep_muOS_dR],
-    scopes=["e2m","m2m"],
-)
+# lepton_muOS_dR = Producer(
+#     name="lepton_muOS_dR",
+#     call='quantities::deltaR({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.mu_p4_OSwithLep,
+#     ],
+#     output=[q.lep_muOS_dR],
+#     scopes=["e2m","m2m"],
+# )
 #######################
 ### deta lepW and mumuH
-lepton_H_deta = Producer(
-    name="lepton_H_deta",
-    call='quantities::deltaEta({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.dimuon_p4_Higgs,
-    ],
-    output=[q.lep_H_deta],
-    scopes=["e2m","m2m"],
-)
+# lepton_H_deta = Producer(
+#     name="lepton_H_deta",
+#     call='quantities::deltaEta({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.dimuon_p4_Higgs,
+#     ],
+#     output=[q.lep_H_deta],
+#     scopes=["e2m","m2m"],
+# )
 ### deta lepW and muSS
-lepton_muSS_deta = Producer(
-    name="lepton_muSS_deta",
-    call='quantities::deltaEta({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.mu_p4_SSwithLep,
-    ],
-    output=[q.lep_muSS_deta],
-    scopes=["e2m","m2m"],
-)
+# lepton_muSS_deta = Producer(
+#     name="lepton_muSS_deta",
+#     call='quantities::deltaEta({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.mu_p4_SSwithLep,
+#     ],
+#     output=[q.lep_muSS_deta],
+#     scopes=["e2m","m2m"],
+# )
 ### deta lepW and muOS
-lepton_muOS_deta = Producer(
-    name="lepton_muOS_deta",
-    call='quantities::deltaEta({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.mu_p4_OSwithLep,
-    ],
-    output=[q.lep_muOS_deta],
-    scopes=["e2m","m2m"],
-)
+# lepton_muOS_deta = Producer(
+#     name="lepton_muOS_deta",
+#     call='quantities::deltaEta({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.mu_p4_OSwithLep,
+#     ],
+#     output=[q.lep_muOS_deta],
+#     scopes=["e2m","m2m"],
+# )
 ### dR llZ
 leplepZ_dR = Producer(
     name="leplepZ_dR",
@@ -847,27 +850,27 @@ leplepZ_dR = Producer(
     scopes=["eemm","mmmm"],
 )
 ### deta mumuH and llZ
-llZ_mmH_deta = Producer(
-    name="llZ_mmH_deta",
-    call='quantities::deltaEta({df}, {output}, {input})',
-    input=[
-      q.dilepton_p4_Z,
-      q.dimuon_p4_Higgs,
-    ],
-    output=[q.Z_H_deta],
-    scopes=["eemm","mmmm"],
-)
+# llZ_mmH_deta = Producer(
+#     name="llZ_mmH_deta",
+#     call='quantities::deltaEta({df}, {output}, {input})',
+#     input=[
+#       q.dilepton_p4_Z,
+#       q.dimuon_p4_Higgs,
+#     ],
+#     output=[q.Z_H_deta],
+#     scopes=["eemm","mmmm"],
+# )
 ### dphi mumuH and llZ
-llZ_mmH_dphi = Producer(
-    name="llZ_mmH_dphi",
-    call='quantities::deltaPhi({df}, {output}, {input})',
-    input=[
-      q.dilepton_p4_Z,
-      q.dimuon_p4_Higgs,
-    ],
-    output=[q.Z_H_dphi],
-    scopes=["eemm","mmmm"],
-)
+# llZ_mmH_dphi = Producer(
+#     name="llZ_mmH_dphi",
+#     call='quantities::deltaPhi({df}, {output}, {input})',
+#     input=[
+#       q.dilepton_p4_Z,
+#       q.dimuon_p4_Higgs,
+#     ],
+#     output=[q.Z_H_dphi],
+#     scopes=["eemm","mmmm"],
+# )
 ### dphi met and H
 met_mmH_dphi = Producer(
     name="met_mmH_dphi",
@@ -913,27 +916,27 @@ Calc_MT_muOS_MHT = Producer(
     scopes=["e2m","m2m"],
 )
 ### calc MT(lepW and MHT)
-Calc_MT_lepton_MHT = Producer(
-    name="Calc_MT_lepton_MHT",
-    call="quantities::mT_MHT({df}, {output}, {input})",
-    input=[
-        q.extra_lep_p4,
-        q.MHT_p4,
-    ],
-    output=[q.mt_lepWAndMHT],
-    scopes=["e2m","m2m"],
-)
+# Calc_MT_lepton_MHT = Producer(
+#     name="Calc_MT_lepton_MHT",
+#     call="quantities::mT_MHT({df}, {output}, {input})",
+#     input=[
+#         q.extra_lep_p4,
+#         q.MHT_p4,
+#     ],
+#     output=[q.mt_lepWAndMHT],
+#     scopes=["e2m","m2m"],
+# )
 ### calc dphi(lepW and MHT)
-lepW_MHT_dphi = Producer(
-    name="lepW_MHT_dphi",
-    call='quantities::deltaPhi({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.MHT_p4,
-    ],
-    output=[q.lep_MHT_dphi],
-    scopes=["e2m","m2m"],
-)
+# lepW_MHT_dphi = Producer(
+#     name="lepW_MHT_dphi",
+#     call='quantities::deltaPhi({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.MHT_p4,
+#     ],
+#     output=[q.lep_MHT_dphi],
+#     scopes=["e2m","m2m"],
+# )
 ### cut flag
 FilterFlagDiMuFromH = Producer(
     name="FilterFlagDiMuFromH",
@@ -955,13 +958,6 @@ FilterFlagEleVeto = Producer(
     input=[q.Flag_Ele_Veto],
     output=None,
     scopes=["m2m","mmmm","nnmm","fjmm","nnmm_dycontrol"],
-)
-FilterFlagDiEleZMassVeto = Producer(
-    name="FilterFlagDiEleZMassVeto",
-    call='basefunctions::FilterThreshold({df}, {input}, {flag_DiEleFromZ}, "==", "DiElectron ZMass Veto")',
-    input=[q.Flag_DiEleFromZ],
-    output=None,
-    scopes=["eemm"],
 )
 # check dphi
 mumuH_MHT_dphi = Producer(
@@ -1004,46 +1000,46 @@ mu1_mu2_dphi = Producer(
     output=[q.mu1_mu2_dphi],
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","nnmm","fjmm"],
 )
-lep_mu1_dphi = Producer(
-    name="lep_mu1_dphi",
-    call='quantities::deltaPhi({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.muon_leadingp4_H,
-    ],
-    output=[q.lep_mu1_dphi],
-    scopes=["e2m","m2m"],
-)
-lep_mu2_dphi = Producer(
-    name="lep_mu2_dphi",
-    call='quantities::deltaPhi({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.muon_subleadingp4_H,
-    ],
-    output=[q.lep_mu2_dphi],
-    scopes=["e2m","m2m"],
-)
-lep_H_dphi = Producer(
-    name="lep_H_dphi",
-    call='quantities::deltaPhi({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.dimuon_p4_Higgs,
-    ],
-    output=[q.lep_H_dphi],
-    scopes=["e2m","m2m"],
-)
-lepW_MHTALL_dphi = Producer(
-    name="lepW_MHTALL_dphi",
-    call='quantities::deltaPhi({df}, {output}, {input})',
-    input=[
-      q.extra_lep_p4,
-      q.MHTALL_p4,
-    ],
-    output=[q.lep_MHTALL_dphi],
-    scopes=["e2m","m2m"],
-)
+# lep_mu1_dphi = Producer(
+#     name="lep_mu1_dphi",
+#     call='quantities::deltaPhi({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.muon_leadingp4_H,
+#     ],
+#     output=[q.lep_mu1_dphi],
+#     scopes=["e2m","m2m"],
+# )
+# lep_mu2_dphi = Producer(
+#     name="lep_mu2_dphi",
+#     call='quantities::deltaPhi({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.muon_subleadingp4_H,
+#     ],
+#     output=[q.lep_mu2_dphi],
+#     scopes=["e2m","m2m"],
+# )
+# lep_H_dphi = Producer(
+#     name="lep_H_dphi",
+#     call='quantities::deltaPhi({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.dimuon_p4_Higgs,
+#     ],
+#     output=[q.lep_H_dphi],
+#     scopes=["e2m","m2m"],
+# )
+# lepW_MHTALL_dphi = Producer(
+#     name="lepW_MHTALL_dphi",
+#     call='quantities::deltaPhi({df}, {output}, {input})',
+#     input=[
+#       q.extra_lep_p4,
+#       q.MHTALL_p4,
+#     ],
+#     output=[q.lep_MHTALL_dphi],
+#     scopes=["e2m","m2m"],
+# )
 PassFlagZmassVeto = Producer(
     name="PassFlagZmassVeto",
     call='physicsobject::PassFlag({df}, {output})',
@@ -1065,13 +1061,6 @@ PassFlagZZVeto = Producer(
     output=[q.Flag_ZZVeto], # eemm channel using this all pass flag
     scopes=["eemm"],
 )
-PassFlagDiEleFromZ = Producer(
-    name="PassFlagDiEleFromZ",
-    call='physicsobject::PassFlag({df}, {output})',
-    input=[],
-    output=[q.Flag_DiEleFromZ], # mmmm channel using this all pass flag
-    scopes=["mmmm"],
-)
 PassFlagDiMuonHiggs = Producer(
     name="PassFlagDiMuonHiggs",
     call='physicsobject::PassFlag({df}, {output})',
@@ -1087,36 +1076,36 @@ PassMinDiEleMass = Producer(
     scopes=["mmmm"], # already done in ZZ Veto (exist H and Z)
 )
 # Calculate the cosine helicity angle
-Calc_CosThStar_lep_muOS = Producer(
-    name="Calc_CosThStar_lep_muOS",
-    call="physicsobject::Calc_CosThetaStar({df}, {output}, {input})",
-    input=[
-      q.extra_lep_p4,
-      q.mu_p4_OSwithLep,
-    ],
-    output=[q.lep_muOS_cosThStar],
-    scopes=["e2m","m2m"],
-)
-Calc_CosThStar_lep_muSS = Producer(
-    name="Calc_CosThStar_lep_muSS",
-    call="physicsobject::Calc_CosThetaStar({df}, {output}, {input})",
-    input=[
-      q.extra_lep_p4,
-      q.mu_p4_SSwithLep,
-    ],
-    output=[q.lep_muSS_cosThStar],
-    scopes=["e2m","m2m"],
-)
-Calc_CosThStar_Z_H = Producer(
-    name="Calc_CosThStar_Z_H",
-    call="physicsobject::Calc_CosThetaStar_ZH({df}, {output}, {input})",
-    input=[
-      q.dilepton_p4_Z,
-      q.dimuon_p4_Higgs,
-    ],
-    output=[q.Z_H_cosThStar],
-    scopes=["eemm","mmmm"],
-)
+# Calc_CosThStar_lep_muOS = Producer(
+#     name="Calc_CosThStar_lep_muOS",
+#     call="physicsobject::Calc_CosThetaStar({df}, {output}, {input})",
+#     input=[
+#       q.extra_lep_p4,
+#       q.mu_p4_OSwithLep,
+#     ],
+#     output=[q.lep_muOS_cosThStar],
+#     scopes=["e2m","m2m"],
+# )
+# Calc_CosThStar_lep_muSS = Producer(
+#     name="Calc_CosThStar_lep_muSS",
+#     call="physicsobject::Calc_CosThetaStar({df}, {output}, {input})",
+#     input=[
+#       q.extra_lep_p4,
+#       q.mu_p4_SSwithLep,
+#     ],
+#     output=[q.lep_muSS_cosThStar],
+#     scopes=["e2m","m2m"],
+# )
+# Calc_CosThStar_Z_H = Producer(
+#     name="Calc_CosThStar_Z_H",
+#     call="physicsobject::Calc_CosThetaStar_ZH({df}, {output}, {input})",
+#     input=[
+#       q.dilepton_p4_Z,
+#       q.dimuon_p4_Higgs,
+#     ],
+#     output=[q.Z_H_cosThStar],
+#     scopes=["eemm","mmmm"],
+# )
 # Cut met pt, return a flag to do filter
 Flag_MetCut = Producer(
     name="Flag_MetCut",

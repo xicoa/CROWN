@@ -33,6 +33,16 @@ BuildGenMetVector = Producer(
     output=[q.genmet_p4],
     scopes=["global"],
 )
+BuildPupppiMET = Producer(
+    name="BuildPupppiMET",
+    call="lorentzvectors::buildMet({df}, {input}, {output})",
+    input=[
+        nanoAOD.GenMET_pt,
+        nanoAOD.GenMET_phi,
+    ],
+    output=[q.genmet_p4],
+    scopes=["global"],
+)
 MetBasics = ProducerGroup(
     name="MetBasics",
     call=None,

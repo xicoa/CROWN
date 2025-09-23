@@ -33,8 +33,7 @@ ROOT::RDF::RNode buildparticle(ROOT::RDF::RNode df,
                                const std::vector<std::string> &quantities,
                                const std::string &outputname,
                                const int &position) {
-    auto df1 = df.Define(
-        outputname,
+    auto lambda =
         [position, outputname](
             const ROOT::RVec<int> &pair, const ROOT::RVec<float> &pts,
             const ROOT::RVec<float> &etas, const ROOT::RVec<float> &phis,
@@ -64,8 +63,8 @@ ROOT::RDF::RNode buildparticle(ROOT::RDF::RNode df,
             Logger::get("lorentzvectors")
                 ->debug("P4 - Particle {} : {}", position, p4);
             return p4;
-        },
-        quantities);
+        };
+    auto df1 = df.Define(outputname, lambda, quantities);
     return df1;
 }
 

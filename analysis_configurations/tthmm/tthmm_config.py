@@ -137,7 +137,7 @@ def build_config(
             "max_muon_eta": 2.4, # ggh, vbf
             "muon_id": "Muon_mediumId", # ggh, vbf cut-based atm https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Medium_Muon
             "muon_iso_cut": 0.25, # ggh, vbf PFIsoLoose dR=0.4 https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Particle_Flow_isolation
-            "Z_mass_veto": 91.2,
+            "Z_mass": 91.2,
         },
     )
     
@@ -512,7 +512,7 @@ def build_config(
             "muon_mini_iso_cut": 0.4,
             "max_muon_deepCSVClosest_barrel": 0.8958,
             "max_muon_deepCSVClosest_endcap": 0.8001,
-            # deepCSV^cloest not included
+            # deepCSV^closest not included
         }
     )
     # electron selection
@@ -591,11 +591,11 @@ def build_config(
             event.FilterNMuons, # vh ==3 muons
             muons.MuonCollection, # collect ordered by pt
             ###
-            event.Mask_DiMuonPair, # dimuonHiggs index
+            event.DiMuonHiggsCandCollection, # dimuonHiggs index
             event.Flag_DiMuonFromHiggs,
             event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
             ###
-            event.DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
+            event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
             event.VetoVHElectron,
             event.VetoVHMuon,
             jets.FilterNJets,
@@ -629,7 +629,7 @@ def build_config(
             triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel, 
             # vh the trigger-matched muon should have pT > 29 (26) for 2017 (2016,18)
             
-            #
+            
             # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
             p4.mu1_fromH_pt,
             p4.mu1_fromH_eta,
@@ -671,11 +671,12 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.MuonCollection, # collect ordered by pt
             
-            event.Mask_DiMuonPair, # dimuonHiggs index
+            event.DiMuonHiggsCandCollection, # dimuonHiggs index
             event.Flag_DiMuonFromHiggs,
             event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
             ###
-            event.DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
+            event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
+            event.Flag_DiElectronMassFromZVeto,
             # event.LeadJetPtCut,
             # event.SubleadJetPtCut,
             # event.DiJetMassCut,
@@ -705,7 +706,20 @@ def build_config(
             lepton.DiMuonMassClosestToZMass,
             lepton.DiElectronMassClosestToZMass,
             lepton.LeptonChargeSumVeto_elemu,
-            #
+            
+            lepton.ExtraMuonIndex,
+            lepton.ExtraMuon_p4,
+            lepton.ExtraElectronIndex,
+            lepton.ExtraElectron_p4,
+            p4.extra_muon_pt,
+            p4.extra_muon_phi,
+            p4.extra_muon_mass,
+            p4.extra_muon_eta,
+            p4.extra_electron_pt,
+            p4.extra_electron_phi,
+            p4.extra_electron_mass,
+            p4.extra_electron_eta,
+
             # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
             p4.mu1_fromH_pt,
             p4.mu1_fromH_eta,
@@ -776,6 +790,7 @@ def build_config(
 
             q.met_pt,
             q.met_phi,
+            nanoAOD.MET_sumEt,
             q.genmet_pt,
             q.genmet_phi,
         ],
@@ -799,8 +814,15 @@ def build_config(
             q.mu2_fromH_mass,
             q.mu2_fromH_ptErr,
             
+            q.extra_muon_pt,
+            q.extra_muon_phi,
+            q.extra_muon_mass,
+            q.extra_muon_eta,
             
-            
+            q.extra_electron_pt,
+            q.extra_electron_phi,
+            q.extra_electron_mass,
+            q.extra_electron_eta,
             
             q.H_pt,
             q.H_eta,
@@ -839,6 +861,7 @@ def build_config(
             q.mu1_mu2_dphi,
             
 	        q.Flag_dimuon_Zmass_veto,
+            q.Flag_dielectron_Zmass_veto,
             q.Flag_LeptonChargeSumVeto,
             q.Flag_DiMuonFromHiggs,
             triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel.output_group,

@@ -165,44 +165,81 @@ genmet_phi = Producer(
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
 )
 
-##### for extra lepton
-#####
-extra_lep_pt = Producer(
-    name="extra_lep_pt",
+# for extra muon
+extra_muon_pt = Producer(
+    name="extra_muon_pt",
     call='quantities::pt({df}, {output}, {input})',
     input=[
-      q.extra_lep_p4,
+      q.extra_muon_p4,
     ],
-    output=[q.extra_lep_pt],
-    scopes=["e2m","m2m"],
+    output=[q.extra_muon_pt],
+    scopes=["global", "tthmm"],
 )
-extra_lep_eta = Producer(
-    name="extra_lep_eta",
+extra_muon_eta = Producer(
+    name="extra_muon_eta",
     call='quantities::eta({df}, {output}, {input})',
     input=[
-      q.extra_lep_p4,
+      q.extra_muon_p4,
     ],
-    output=[q.extra_lep_eta],
-    scopes=["e2m","m2m"],
+    output=[q.extra_muon_eta],
+    scopes=["global", "tthmm"],
 )
-extra_lep_phi = Producer(
-    name="extra_lep_phi",
+extra_muon_phi = Producer(
+    name="extra_muon_phi",
     call='quantities::phi({df}, {output}, {input})',
     input=[
-      q.extra_lep_p4,
+      q.extra_muon_p4,
     ],
-    output=[q.extra_lep_phi],
-    scopes=["e2m","m2m"],
+    output=[q.extra_muon_phi],
+    scopes=["global", "tthmm"],
 )
-# extra_lep_mass = Producer(
-#     name="extra_lep_mass",
-#     call='quantities::mass({df}, {output}, {input})',
-#     input=[
-#       q.extra_lep_p4,
-#     ],
-#     output=[q.extra_lep_mass],
-#     scopes=["e2m","m2m"],
-# )
+extra_muon_mass = Producer(
+    name="extra_muon_mass",
+    call='quantities::mass({df}, {output}, {input})',
+    input=[
+      q.extra_muon_p4,
+    ],
+    output=[q.extra_muon_mass],
+    scopes=["global", "tthmm"],
+)
+
+extra_electron_pt = Producer(
+    name="extra_electron_pt",
+    call='quantities::pt({df}, {output}, {input})',
+    input=[
+      q.extra_electron_p4,
+    ],
+    output=[q.extra_electron_pt],
+    scopes=["global", "tthmm"],
+)
+extra_electron_eta = Producer(
+    name="extra_electron_eta",
+    call='quantities::eta({df}, {output}, {input})',
+    input=[
+      q.extra_electron_p4,
+    ],
+    output=[q.extra_electron_eta],
+    scopes=["global", "tthmm"],
+)
+extra_electron_phi = Producer(
+    name="extra_electron_phi",
+    call='quantities::phi({df}, {output}, {input})',
+    input=[
+      q.extra_electron_p4,
+    ],
+    output=[q.extra_electron_phi],
+    scopes=["global", "tthmm"],
+)
+extra_electron_mass = Producer(
+    name="extra_electron_mass",
+    call='quantities::mass({df}, {output}, {input})',
+    input=[
+      q.extra_electron_p4,
+    ],
+    output=[q.extra_electron_mass],
+    scopes=["global", "tthmm"],
+)
+
 
 ##### for muOS from Higgs
 #####
@@ -362,42 +399,42 @@ lep2_fromZ_phi = Producer(
 
 ##### for Z in 4l category
 #####
-Z_pt = Producer(
-    name="Z_pt",
-    call='quantities::pt({df}, {output}, {input})',
-    input=[
-      q.dilepton_p4_Z,
-    ],
-    output=[q.Z_pt],
-    scopes=["eemm","mmmm"],
-)
-Z_eta = Producer(
-    name="Z_eta",
-    call='quantities::eta({df}, {output}, {input})',
-    input=[
-      q.dilepton_p4_Z,
-    ],
-    output=[q.Z_eta],
-    scopes=["eemm","mmmm"],
-)
-Z_phi = Producer(
-    name="Z_phi",
-    call='quantities::phi({df}, {output}, {input})',
-    input=[
-      q.dilepton_p4_Z,
-    ],
-    output=[q.Z_phi],
-    scopes=["eemm","mmmm"],
-)
-Z_mass = Producer(
-    name="Z_mass",
-    call='quantities::mass({df}, {output}, {input})',
-    input=[
-      q.dilepton_p4_Z,
-    ],
-    output=[q.Z_mass],
-    scopes=["eemm","mmmm"],
-)
+# Z_pt = Producer(
+#     name="Z_pt",
+#     call='quantities::pt({df}, {output}, {input})',
+#     input=[
+#       q.dilepton_p4_Z,
+#     ],
+#     output=[q.Z_pt],
+#     scopes=["eemm","mmmm"],
+# )
+# Z_eta = Producer(
+#     name="Z_eta",
+#     call='quantities::eta({df}, {output}, {input})',
+#     input=[
+#       q.dilepton_p4_Z,
+#     ],
+#     output=[q.Z_eta],
+#     scopes=["eemm","mmmm"],
+# )
+# Z_phi = Producer(
+#     name="Z_phi",
+#     call='quantities::phi({df}, {output}, {input})',
+#     input=[
+#       q.dilepton_p4_Z,
+#     ],
+#     output=[q.Z_phi],
+#     scopes=["eemm","mmmm"],
+# )
+# Z_mass = Producer(
+#     name="Z_mass",
+#     call='quantities::mass({df}, {output}, {input})',
+#     input=[
+#       q.dilepton_p4_Z,
+#     ],
+#     output=[q.Z_mass],
+#     scopes=["eemm","mmmm"],
+# )
 
 genmu1_fromH_pt = Producer(
     name="genmu1_fromH_pt",

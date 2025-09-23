@@ -20,15 +20,9 @@ ROOT::RDF::RNode ECalGapVeto(ROOT::RDF::RNode df, const std::string &etaColumnNa
                               const float &lowerThresholdBarrel,
                               const float &upperThresholdBarrel,
                               const float &lowerThresholdEndcap);
-ROOT::RDF::RNode DiMuonFromHiggs(ROOT::RDF::RNode df, const std::string &outputname,
+ROOT::RDF::RNode DiMuonFromHiggsFlag(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &dimuons_index);
-ROOT::RDF::RNode HiggsToDiMuonPairCollection(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &particle_pts,
-                                 const std::string &particle_etas,
-                                 const std::string &particle_phis,
-                                 const std::string &particle_masses,
-                                 const std::string &dimuons_index);
-ROOT::RDF::RNode DiMuonFromZVeto(ROOT::RDF::RNode df, const std::string &outputname,
+ROOT::RDF::RNode DiLeptonFromZVetoFlag(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &particle_pts,
                                  const std::string &particle_etas,
                                  const std::string &particle_phis,
@@ -62,12 +56,12 @@ ROOT::RDF::RNode ZCandDiElectronPairCollection(ROOT::RDF::RNode df, const std::s
                                  const std::string &base_electrons_index);
 ROOT::RDF::RNode DiEleFromZ(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &dielectrons_index);
-ROOT::RDF::RNode ZToDiElectronPairCollection(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &particle_pts,
-                                 const std::string &particle_etas,
-                                 const std::string &particle_phis,
-                                 const std::string &particle_masses,
-                                 const std::string &dielectrons_index);
+ROOT::RDF::RNode FirstTwoObject_p4(
+    ROOT::RDF::RNode df, const std::string &outputname,
+    const std::string &particle_pts, const std::string &particle_etas,
+    const std::string &particle_phis, const std::string &particle_masses,
+    const std::string &diparticle_index,
+    const ROOT::RVec<int> &exclude_particle_index = {});
 ROOT::RDF::RNode HiggsAndZFourMuonsCollection(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &particle_pts,
                                  const std::string &particle_etas,
@@ -77,25 +71,24 @@ ROOT::RDF::RNode HiggsAndZFourMuonsCollection(ROOT::RDF::RNode df, const std::st
                                  const std::string &goodmuons_index);
 ROOT::RDF::RNode QuadMuonFromZZVeto(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &quadmuons_index);
-ROOT::RDF::RNode ZToSecondMuonPairCollection(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &particle_pts,
-                                 const std::string &particle_etas,
-                                 const std::string &particle_phis,
-                                 const std::string &particle_masses,
-                                 const std::string &fourmuons_index);
-ROOT::RDF::RNode ExtraMuonIndexFromW(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &particle_pts,
-                                 const std::string &particle_etas,
-                                 const std::string &particle_phis,
-                                 const std::string &particle_masses,
-                                 const std::string &goodmuons_index,
-                                 const std::string &dimuons_index);
-ROOT::RDF::RNode ExtraMuonFromW(ROOT::RDF::RNode df, const std::string &outputname,
-                                 const std::string &particle_pts,
-                                 const std::string &particle_etas,
-                                 const std::string &particle_phis,
-                                 const std::string &particle_masses,
-                                 const std::string &extra_muon_index);
+ROOT::RDF::RNode ZToSecondMuonPairCollection(
+    ROOT::RDF::RNode df, const std::string &outputname,
+    const std::string &particle_pts, const std::string &particle_etas,
+    const std::string &particle_phis, const std::string &particle_masses,
+    const std::string &fourmuons_index);
+ROOT::RDF::RNode ExtraObjectIndex(
+    ROOT::RDF::RNode df, const std::string &outputname,
+    const std::string &particle_pts, const std::string &particle_etas,
+    const std::string &particle_phis, const std::string &particle_masses,
+    const std::string &object_index, const std::string &exclude_column = "",
+    const std::string &exclude_index = {});
+ROOT::RDF::RNode ObjectWithIndex_p4(ROOT::RDF::RNode df,
+                                    const std::string &outputname,
+                                    const std::string &particle_pts,
+                                    const std::string &particle_etas,
+                                    const std::string &particle_phis,
+                                    const std::string &particle_masses,
+                                    const std::string &particle_index);
 ROOT::RDF::RNode muSSorOSwithLeptonW_p4(ROOT::RDF::RNode df, const std::string &outputname,
                                  const std::string &muon_pts,
                                  const std::string &muon_etas,

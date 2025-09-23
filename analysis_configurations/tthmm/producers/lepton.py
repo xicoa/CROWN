@@ -32,10 +32,10 @@ CalcSmallestDiElectronMass = Producer(
     output=[q.smallest_dielectron_mass],
     scopes=["global","tthmm"],
 )
-# find m_ll closest to a given value
+# find m_ll closest to ZMass
 DiMuonMassClosestToZMass = Producer(
     name="DiMuonMassClosestToZMass",
-    call='physicsobject::dileptonMassClosest({df}, {output}, {input}, {Z_mass_veto})',
+    call='physicsobject::dileptonMassClosest({df}, {output}, {input}, {Z_mass})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
            nanoAOD.Muon_phi, 
@@ -47,7 +47,7 @@ DiMuonMassClosestToZMass = Producer(
 )
 DiElectronMassClosestToZMass = Producer(
     name="DiElectronMassClosestToZMass",
-    call='physicsobject::dileptonMassClosest({df}, {output}, {input}, {Z_mass_veto})',
+    call='physicsobject::dileptonMassClosest({df}, {output}, {input}, {Z_mass})',
     input=[nanoAOD.Electron_pt,
            nanoAOD.Electron_eta, 
            nanoAOD.Electron_phi, 
@@ -75,10 +75,9 @@ LeptonChargeSumVeto_elemu = Producer(
     output=[q.Flag_LeptonChargeSumVeto],   # 1 stands pm1, 2 stands 0, 0 stands others
     scopes=["global","tthmm","e2m","eemm","nnmm_topcontrol"],
 )
-### extra lepton (muon) in m2m channel
-Mu1_W_m2m_index = Producer(
-    name="Mu1_W_m2m_index",
-    call="physicsobject::ExtraMuonIndexFromW({df}, {output}, {input})",
+ExtraMuonIndex = Producer(
+    name="ExtraMuonIndex",
+    call="physicsobject::ExtraObjectIndex({df}, {output}, {input})",
     input=[
         nanoAOD.Muon_pt,
         nanoAOD.Muon_eta,
@@ -88,11 +87,11 @@ Mu1_W_m2m_index = Producer(
         q.dimuon_HiggsCand_collection,
     ],
     output=[q.extra_muon_index],
-    scopes=["m2m"],
+    scopes=["global", "tthmm"],
 )
-Mu1_W_m2m = Producer(
-    name="Mu1_W_m2m",
-    call="physicsobject::ExtraMuonFromW({df}, {output}, {input})",
+ExtraMuon_p4 = Producer(
+    name="ExtraMuon_p4",
+    call="physicsobject::ObjectWithIndex_p4({df}, {output}, {input})",
     input=[
         nanoAOD.Muon_pt,
         nanoAOD.Muon_eta,
@@ -100,8 +99,34 @@ Mu1_W_m2m = Producer(
         nanoAOD.Muon_mass,
         q.extra_muon_index,
     ],
-    output=[q.extra_lep_p4],
-    scopes=["m2m"],
+    output=[q.extra_muon_p4],
+    scopes=["global", "tthmm"],
+)
+ExtraElectronIndex = Producer(
+    name="ExtraElectronIndex",
+    call="physicsobject::ExtraObjectIndex({df}, {output}, {input})",
+    input=[
+        nanoAOD.Electron_pt,
+        nanoAOD.Electron_eta,
+        nanoAOD.Electron_phi,
+        nanoAOD.Electron_mass,
+        q.base_electron_collection,
+    ],
+    output=[q.extra_electron_index],
+    scopes=["global", "tthmm"],
+)
+ExtraElectron_p4 = Producer(
+    name="ExtraElectron_p4",
+    call="physicsobject::ObjectWithIndex_p4({df}, {output}, {input})",
+    input=[
+        nanoAOD.Electron_pt,
+        nanoAOD.Electron_eta,
+        nanoAOD.Electron_phi,
+        nanoAOD.Electron_mass,
+        q.extra_electron_index,
+    ],
+    output=[q.extra_electron_p4],
+    scopes=["global", "tthmm"],
 )
 ### extra lepton (electron) in e2m channel
 Ele1_W_e2m = Producer(
@@ -114,7 +139,7 @@ Ele1_W_e2m = Producer(
         nanoAOD.Electron_phi,
         nanoAOD.Electron_mass,
     ],
-    output=[q.extra_lep_p4],
+    output=[q.extra_muon_p4],
     scopes=["e2m"],
 )
 ### calc MT_W using lepton_p4 and met
@@ -122,7 +147,7 @@ Calc_MT_W = Producer(
     name="Calc_MT_W",
     call="quantities::mT_MHT({df}, {output}, {input})",
     input=[
-        q.extra_lep_p4,
+        q.extra_muon_p4,
         q.met_p4,
     ],
     output=[q.mt_W],

@@ -126,13 +126,13 @@ Muon_2_ID_SF_vhmm = Producer(
     output=[q.id_wgt_mu_2],
     scopes=["e2m","m2m", "eemm","mmmm","nnmm","nnmm_dycontrol"],
 )
-Muon_3_ID_SF_vhmm_m2m = Producer(
-    name="Muon_3_ID_SF_vhmm_m2m",
-    call='scalefactor::muon::id_vhmm({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_id_sf_name}")',
-    input=[q.extra_lep_p4],
-    output=[q.id_wgt_mu_3],
-    scopes=["m2m"],
-)
+# Muon_3_ID_SF_vhmm_m2m = Producer(
+#     name="Muon_3_ID_SF_vhmm_m2m",
+#     call='scalefactor::muon::id_vhmm({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_id_sf_name}")',
+#     input=[q.extra_lep_p4],
+#     output=[q.id_wgt_mu_3],
+#     scopes=["m2m"],
+# )
 Muon_3_ID_SF_vhmm_mmmm = Producer(
     name="Muon_3_ID_SF_vhmm_mmmm",
     call='scalefactor::muon::id_vhmm({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_id_sf_name}")',
@@ -161,13 +161,13 @@ Muon_2_Iso_SF_vhmm = Producer(
     output=[q.iso_wgt_mu_2],
     scopes=["e2m","m2m", "eemm","mmmm","nnmm","nnmm_dycontrol"],
 )
-Muon_3_Iso_SF_vhmm_m2m = Producer(
-    name="Muon_3_Iso_SF_vhmm_m2m",
-    call='scalefactor::muon::iso_vhmm({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_iso_sf_name}")',
-    input=[q.extra_lep_p4],
-    output=[q.iso_wgt_mu_3],
-    scopes=["m2m"],
-)
+# Muon_3_Iso_SF_vhmm_m2m = Producer(
+#     name="Muon_3_Iso_SF_vhmm_m2m",
+#     call='scalefactor::muon::iso_vhmm({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_iso_sf_name}")',
+#     input=[q.extra_lep_p4],
+#     output=[q.iso_wgt_mu_3],
+#     scopes=["m2m"],
+# )
 Muon_3_Iso_SF_vhmm_mmmm = Producer(
     name="Muon_3_Iso_SF_vhmm_mmmm",
     call='scalefactor::muon::iso_vhmm({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_iso_sf_name}")',
@@ -182,62 +182,62 @@ Muon_4_Iso_SF_vhmm_mmmm = Producer(
     output=[q.iso_wgt_mu_4],
     scopes=["mmmm"],
 )
-MuonIDIso_SF = ProducerGroup(
-    name="MuonIDIso_SF",
-    call=None,
-    input=None,
-    output=None,
-    scopes=["e2m","m2m", "eemm","mmmm","nnmm","nnmm_dycontrol","nnmm_topcontrol"],
-    subproducers={
-        "e2m": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-            Muon_2_ID_SF_vhmm,
-            Muon_2_Iso_SF_vhmm,
-        ],
-        "m2m": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-            Muon_2_ID_SF_vhmm,
-            Muon_2_Iso_SF_vhmm,
-            Muon_3_ID_SF_vhmm_m2m,
-            Muon_3_Iso_SF_vhmm_m2m,
-        ],
-        "eemm": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-            Muon_2_ID_SF_vhmm,
-            Muon_2_Iso_SF_vhmm,
-        ],
-        # 4m TODO
-        "mmmm": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-            Muon_2_ID_SF_vhmm,
-            Muon_2_Iso_SF_vhmm,
-            Muon_3_ID_SF_vhmm_mmmm,
-            Muon_3_Iso_SF_vhmm_mmmm,
-            Muon_4_ID_SF_vhmm_mmmm,
-            Muon_4_Iso_SF_vhmm_mmmm,
-        ],
-        "nnmm": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-            Muon_2_ID_SF_vhmm,
-            Muon_2_Iso_SF_vhmm,
-        ],
-        "nnmm_dycontrol": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-            Muon_2_ID_SF_vhmm,
-            Muon_2_Iso_SF_vhmm,
-        ],
-        "nnmm_topcontrol": [
-            Muon_1_ID_SF_vhmm,
-            Muon_1_Iso_SF_vhmm,
-        ],
-    },
-)
+# MuonIDIso_SF = ProducerGroup(
+#     name="MuonIDIso_SF",
+#     call=None,
+#     input=None,
+#     output=None,
+#     scopes=["e2m","m2m", "eemm","mmmm","nnmm","nnmm_dycontrol","nnmm_topcontrol"],
+#     subproducers={
+#         "e2m": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#             Muon_2_ID_SF_vhmm,
+#             Muon_2_Iso_SF_vhmm,
+#         ],
+#         "m2m": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#             Muon_2_ID_SF_vhmm,
+#             Muon_2_Iso_SF_vhmm,
+#             Muon_3_ID_SF_vhmm_m2m,
+#             Muon_3_Iso_SF_vhmm_m2m,
+#         ],
+#         "eemm": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#             Muon_2_ID_SF_vhmm,
+#             Muon_2_Iso_SF_vhmm,
+#         ],
+#         # 4m TODO
+#         "mmmm": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#             Muon_2_ID_SF_vhmm,
+#             Muon_2_Iso_SF_vhmm,
+#             Muon_3_ID_SF_vhmm_mmmm,
+#             Muon_3_Iso_SF_vhmm_mmmm,
+#             Muon_4_ID_SF_vhmm_mmmm,
+#             Muon_4_Iso_SF_vhmm_mmmm,
+#         ],
+#         "nnmm": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#             Muon_2_ID_SF_vhmm,
+#             Muon_2_Iso_SF_vhmm,
+#         ],
+#         "nnmm_dycontrol": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#             Muon_2_ID_SF_vhmm,
+#             Muon_2_Iso_SF_vhmm,
+#         ],
+#         "nnmm_topcontrol": [
+#             Muon_1_ID_SF_vhmm,
+#             Muon_1_Iso_SF_vhmm,
+#         ],
+#     },
+# )
 MuonIDIso_SF_RooWorkspace = ProducerGroup(
     name="MuonIDIso_SF_RooWorkspace",
     call=None,
@@ -276,13 +276,13 @@ MuonIDIso_SF_RooWorkspace = ProducerGroup(
 #########################
 # Electron ID/ISO SF
 #########################
-Ele_1_IDWP90_SF_e2m = Producer(
-    name="Ele_1_IDWP90_SF_e2m",
-    call='scalefactor::electron::id_e_vhmm({df}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
-    input=[q.extra_lep_p4],
-    output=[q.id_wgt_ele_wp90nonIso_1],
-    scopes=["e2m"],
-)
+# Ele_1_IDWP90_SF_e2m = Producer(
+#     name="Ele_1_IDWP90_SF_e2m",
+#     call='scalefactor::electron::id_e_vhmm({df}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
+#     input=[q.extra_lep_p4],
+#     output=[q.id_wgt_ele_wp90nonIso_1],
+#     scopes=["e2m"],
+# )
 Ele_1_IDWP90_SF_eemm = Producer(
     name="Ele_1_IDWP90_SF_eemm",
     call='scalefactor::electron::id_e_vhmm({df}, {input}, "{ele_sf_year_id}", "wp90noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
@@ -297,13 +297,13 @@ Ele_2_IDWP90_SF = Producer(
     output=[q.id_wgt_ele_wp90nonIso_2],
     scopes=["eemm"],
 )
-Ele_1_IDWP80_SF_e2m = Producer(
-    name="Ele_1_IDWP80_SF_e2m",
-    call='scalefactor::electron::id_e_vhmm({df}, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
-    input=[q.extra_lep_p4],
-    output=[q.id_wgt_ele_wp80nonIso_1],
-    scopes=["e2m"],
-)
+# Ele_1_IDWP80_SF_e2m = Producer(
+#     name="Ele_1_IDWP80_SF_e2m",
+#     call='scalefactor::electron::id_e_vhmm({df}, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
+#     input=[q.extra_lep_p4],
+#     output=[q.id_wgt_ele_wp80nonIso_1],
+#     scopes=["e2m"],
+# )
 Ele_1_IDWP80_SF_eemm = Producer(
     name="Ele_1_IDWP80_SF_eemm",
     call='scalefactor::electron::id_e_vhmm({df}, {input}, "{ele_sf_year_id}", "wp80noiso", "{ele_sf_varation}", {output}, "{ele_sf_file}", "{ele_id_sf_name}")',
@@ -318,19 +318,19 @@ Ele_2_IDWP80_SF = Producer(
     output=[q.id_wgt_ele_wp80nonIso_2],
     scopes=["eemm"],
 )
-EleID_SF = ProducerGroup(
-    name="EleID_SF",
-    call=None,
-    input=None,
-    output=None,
-    scopes=["e2m", "eemm"],
-    subproducers={
-        "e2m": [Ele_1_IDWP90_SF_e2m, Ele_1_IDWP80_SF_e2m],
-        "eemm": [
-            Ele_1_IDWP90_SF_eemm,
-            Ele_1_IDWP80_SF_eemm,
-            Ele_2_IDWP90_SF,
-            Ele_2_IDWP80_SF,
-        ],
-    },
-)
+# EleID_SF = ProducerGroup(
+#     name="EleID_SF",
+#     call=None,
+#     input=None,
+#     output=None,
+#     scopes=["e2m", "eemm"],
+#     subproducers={
+#         "e2m": [Ele_1_IDWP90_SF_e2m, Ele_1_IDWP80_SF_e2m],
+#         "eemm": [
+#             Ele_1_IDWP90_SF_eemm,
+#             Ele_1_IDWP80_SF_eemm,
+#             Ele_2_IDWP90_SF,
+#             Ele_2_IDWP80_SF,
+#         ],
+#     },
+# )

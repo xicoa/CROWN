@@ -78,8 +78,6 @@ ElectronMissingHitsCut = Producer(
 )
 
 # add by hao
-#TODO
-
 ElectronMiniIsoCut = Producer(
     name="ElectronMiniIsoCut",
     call="physicsobject::CutVarMax({df}, {input}, {output}, {ele_mini_iso_cut})",

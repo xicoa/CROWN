@@ -170,10 +170,10 @@ GoodMuons = ProducerGroup(
     output=[q.good_muons_mask], # vh these are the final selection muons' mask
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m", "eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
     subproducers=[
-        GoodMuonPtCut,
-        GoodMuonEtaCut,
-        GoodMuonIDCut,
-        GoodMuonIsoCut,
+        # GoodMuonPtCut,
+        # GoodMuonEtaCut,
+        # GoodMuonIDCut,
+        # GoodMuonIsoCut,
     ],
 )
 #
