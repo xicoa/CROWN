@@ -166,94 +166,93 @@ PUweights = Producer(
     scopes=["global"],
 )
 
-##fsr
-#muon_fsrPhotonIdx_1 = Producer(
-#    name="muon_fsrPhotonIdx_1",
-#    call="basefunctions::getvar<int>({df}, {output}, 0, {input})",
-#    #input=[q.selectedLepton, nanoAOD.Muon_fsrPhotonIdx],
-#    input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_fsrPhotonIdx],
-#    output=[q.fsrPhotonIdx_1],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhotonIdx_2 = Producer(
-#    name="muon_fsrPhotonIdx_2",
-#    call="basefunctions::getvar<int>({df}, {output}, 1, {input})",
-#    input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_fsrPhotonIdx],
-#    output=[q.fsrPhotonIdx_2],
-#    scopes=["vbfhmm"],
-#)
-#
-#muon_fsrPhoton_pt_1 = Producer(
-#    name="muon_fsrPhoton_pt_1",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_pt],
-#    output=[q.fsrPhoton_pt_1],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_eta_1 = Producer(
-#    name="muon_fsrPhoton_eta_1",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_eta],
-#    output=[q.fsrPhoton_eta_1],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_phi_1 = Producer(
-#    name="muon_fsrPhoton_phi_1",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_phi],
-#    output=[q.fsrPhoton_phi_1],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_dROverEt2_1 = Producer(
-#    name="muon_fsrPhoton_dROverEt2_1",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_dROverEt2],
-#    output=[q.fsrPhoton_dROverEt2_1],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_relIso03_1 = Producer(
-#    name="muon_fsrPhoton_relIso03_1",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_relIso03],
-#    output=[q.fsrPhoton_relIso03_1],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_pt_2 = Producer(
-#    name="muon_fsrPhoton_pt_2",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_pt],
-#    output=[q.fsrPhoton_pt_2],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_eta_2 = Producer(
-#    name="muon_fsrPhoton_eta_2",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_eta],
-#    output=[q.fsrPhoton_eta_2],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_phi_2 = Producer(
-#    name="muon_fsrPhoton_phi_2",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_phi],
-#    output=[q.fsrPhoton_phi_2],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_dROverEt2_2 = Producer(
-#    name="muon_fsrPhoton_dROverEt2_2",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_dROverEt2],
-#    output=[q.fsrPhoton_dROverEt2_2],
-#    scopes=["vbfhmm"],
-#)
-#muon_fsrPhoton_relIso03_2 = Producer(
-#    name="muon_fsrPhoton_relIso03_2",
-#    call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
-#    input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_relIso03],
-#    output=[q.fsrPhoton_relIso03_2],
-#    scopes=["vbfhmm"],
-#)
-###
+# fsr
+muon_fsrPhotonIdx_1 = Producer(
+   name="muon_fsrPhotonIdx_1",
+   call="basefunctions::getvar<int>({df}, {output}, 0, {input})",
+   input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_fsrPhotonIdx],
+   output=[q.fsrPhotonIdx_1],
+   scopes=["vbfhmm"],
+)
+muon_fsrPhotonIdx_2 = Producer(
+   name="muon_fsrPhotonIdx_2",
+   call="basefunctions::getvar<int>({df}, {output}, 1, {input})",
+   input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_fsrPhotonIdx],
+   output=[q.fsrPhotonIdx_2],
+   scopes=["vbfhmm"],
+)
+
+muon_fsrPhoton_pt_1 = Producer(
+   name="muon_fsrPhoton_pt_1",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_pt],
+   output=[q.fsrPhoton_pt_1],
+   scopes=["vbfhmm"],
+)
+muon_fsrPhoton_eta_1 = Producer(
+   name="muon_fsrPhoton_eta_1",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_eta],
+   output=[q.fsrPhoton_eta_1],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_phi_1 = Producer(
+   name="muon_fsrPhoton_phi_1",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_phi],
+   output=[q.fsrPhoton_phi_1],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_dROverEt2_1 = Producer(
+   name="muon_fsrPhoton_dROverEt2_1",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_dROverEt2],
+   output=[q.fsrPhoton_dROverEt2_1],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_relIso03_1 = Producer(
+   name="muon_fsrPhoton_relIso03_1",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_1, nanoAOD.FsrPhoton_relIso03],
+   output=[q.fsrPhoton_relIso03_1],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_pt_2 = Producer(
+   name="muon_fsrPhoton_pt_2",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_pt],
+   output=[q.fsrPhoton_pt_2],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_eta_2 = Producer(
+   name="muon_fsrPhoton_eta_2",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_eta],
+   output=[q.fsrPhoton_eta_2],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_phi_2 = Producer(
+   name="muon_fsrPhoton_phi_2",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_phi],
+   output=[q.fsrPhoton_phi_2],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_dROverEt2_2 = Producer(
+   name="muon_fsrPhoton_dROverEt2_2",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_dROverEt2],
+   output=[q.fsrPhoton_dROverEt2_2],
+   scopes=["vbfhmm", "tthmm"],
+)
+muon_fsrPhoton_relIso03_2 = Producer(
+   name="muon_fsrPhoton_relIso03_2",
+   call="basefunctions::getvar<float>({df}, {output}, 0, {input})",
+   input=[q.fsrPhotonIdx_2, nanoAOD.FsrPhoton_relIso03],
+   output=[q.fsrPhoton_relIso03_2],
+   scopes=["vbfhmm", "tthmm"],
+)
+##
 
 
 # Rochester correction

@@ -512,7 +512,6 @@ def build_config(
             "muon_mini_iso_cut": 0.4,
             "max_muon_deepCSVClosest_barrel": 0.8958,
             "max_muon_deepCSVClosest_endcap": 0.8001,
-            # deepCSV^closest not included
         }
     )
     # electron selection
@@ -555,19 +554,12 @@ def build_config(
             jets.GoodBJetsLoose, 
             jets.GoodBJetsMedium, 
             jets.NumberOfGoodJets,
-            jets.NumberOfLooseB, # vh count loose bjets for ttH veto
-            jets.NumberOfMediumB, # vh count medium bjets for ttH veto
-            # event.VetottHLooseB, # vh veto ttH no more than 1 loose bjet
-            # event.VetottHMediumB, # vh veto ttH no more than 1 medium bjet
+            jets.NumberOfLooseB,
+            jets.NumberOfMediumB,
             met.MetBasics, # build met vector for calculation
             met.BuildGenMetVector,
             jets.JetCollection,
             jets.Calc_MHT,
-            #jets.FilterNJets,
-            #jets.LVJet1,
-            #jets.LVJet2,
-            #jets.LVJet3,
-            #jets.LVJet4,
             fatjets.FatJetEnergyCorrection,
             fatjets.GoodFatJets,
             fatjets.NumberOfGoodFatJets,
@@ -754,8 +746,20 @@ def build_config(
             jets.DiJetEta,
             jets.TriJetMass,
             
+            genparticles.genMu1_H,
+            genparticles.genMu2_H,
+            genparticles.dimuon_gen_collection,
+
             p4.genmet_pt,
-            p4.genmet_phi,            
+            p4.genmet_phi,        
+            p4.genmu1_fromH_pt,
+            p4.genmu1_fromH_eta,
+            p4.genmu1_fromH_phi,
+            p4.genmu1_fromH_mass,
+            p4.genmu2_fromH_pt,
+            p4.genmu2_fromH_eta,
+            p4.genmu2_fromH_phi,
+            p4.genmu2_fromH_mass,
         ]
     )
     
@@ -793,6 +797,14 @@ def build_config(
             nanoAOD.MET_sumEt,
             q.genmet_pt,
             q.genmet_phi,
+            q.genmu1_fromH_pt,
+            q.genmu1_fromH_eta,
+            q.genmu1_fromH_phi,
+            q.genmu1_fromH_mass,
+            q.genmu2_fromH_pt,
+            q.genmu2_fromH_eta,
+            q.genmu2_fromH_phi,
+            q.genmu2_fromH_mass,
         ],
     )
     # endregion
@@ -924,12 +936,12 @@ def build_config(
         ),
     )
     configuration.add_modification_rule(
-        ["nnmm"],
+        ["tthmm"],
         RemoveProducer(
             producers=[
-             #   genparticles.dimuon_gen_collection,
-             #   genparticles.genMu1_H,
-             #   genparticles.genMu2_H,
+                genparticles.dimuon_gen_collection,
+                genparticles.genMu1_H,
+                genparticles.genMu2_H,
                 p4.genmu1_fromH_pt,
                 p4.genmu1_fromH_eta,
                 p4.genmu1_fromH_phi,
