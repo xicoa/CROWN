@@ -287,9 +287,10 @@ CutVarMaxPiecewise(ROOT::RDF::RNode df, const std::string &quantity,
                    const float &regionThreshold, const bool absMode);
 ROOT::RDF::RNode
 CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
-                   const std::string &quantity, const std::string &objEta,
-                   const std::string &objPhi, const std::string &thisEta,
-                   const std::string &thisPhi, const float &threshold);
+                    const std::string &quantity, const std::string &objEta,
+                    const std::string &objPhi, const std::string &objMask,
+                    const std::string &thisEta, const std::string &thisPhi,
+                    const float &threshold);
 ROOT::RDF::RNode CutVarMaxClosestObjPiecewise(
     ROOT::RDF::RNode df, const std::string &maskname,
     const std::string &quantity, const std::string &objEta,

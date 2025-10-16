@@ -360,16 +360,10 @@ ROOT::RDF::RNode HiggsCandDiMuonPairCollection(
         for (unsigned int k = 0; k < (int)goodmuons_index.size(); ++k) {
             try {
                 p4.push_back(ROOT::Math::PtEtaPhiMVector(
-                    particle_pts.at(
-                        goodmuons_index[k]), /// goodmuons_index[k] points to
-                                             /// the good muon index k
-                    particle_etas.at(goodmuons_index[k]), // k = 0, points to
-                                                          // goodmuon_index[0]
-                    particle_phis.at(
-                        goodmuons_index[k]), // k ,points to goodmuon_index[k]
-                    particle_masses.at(
-                        goodmuons_index[k]))); // index what I want is
-                                               // goodmuon_index[k] k,i or j
+                    particle_pts.at(goodmuons_index[k]),
+                    particle_etas.at(goodmuons_index[k]),
+                    particle_phis.at(goodmuons_index[k]),
+                    particle_masses.at(goodmuons_index[k])));
             } catch (const std::out_of_range &e) {
                 p4.push_back(
                     ROOT::Math::PtEtaPhiMVector(default_float, default_float,
@@ -1824,24 +1818,27 @@ CutVarMaxPiecewise(ROOT::RDF::RNode df, const std::string &quantity,
 ROOT::RDF::RNode
 CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
                     const std::string &quantity, const std::string &objEta,
-                    const std::string &objPhi, const std::string &thisEta,
-                    const std::string &thisPhi, const float &threshold) {
+                    const std::string &objPhi, const std::string &objMask,
+                    const std::string &thisEta, const std::string &thisPhi,
+                    const float &threshold) {
     auto lambda = [&threshold](const ROOT::RVec<float> &q,
                                const ROOT::RVec<float> &oEta,
                                const ROOT::RVec<float> &oPhi,
+                               const ROOT::RVec<int> &oMask,
                                const ROOT::RVec<float> &tEta,
                                const ROOT::RVec<float> &tPhi) {
         ROOT::RVec<int> mask(tEta.size(), 1);
         for (size_t i = 0; i < tEta.size(); i++) {
             float minDR = 1000.0;
             float closestObjQuantity = -1000.0;
-            for (size_t j = 0; j < oEta.size(); j++) {
-                float dEta = tEta[i] - oEta[j];
-                float dPhi = tPhi[i] - oPhi[j];
+            for (size_t j = 0; j < oMask.size(); j++) {
+                int oIndex = oMask[j];
+                float dEta = tEta[i] - oEta[oIndex];
+                float dPhi = tPhi[i] - oPhi[oIndex];
                 float deltaRSquare = dEta * dEta + dPhi * dPhi;
                 if (deltaRSquare < minDR) {
                     minDR = deltaRSquare;
-                    closestObjQuantity = q[j];
+                    closestObjQuantity = q[oIndex];
                 }
             }
             if (closestObjQuantity >= threshold) {
@@ -1852,7 +1849,7 @@ CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
     };
 
     auto df1 = df.Define(maskname, lambda,
-                         {quantity, objEta, objPhi, thisEta, thisPhi});
+                         {quantity, objEta, objPhi, objMask, thisEta, thisPhi});
     return df1;
 }
 

@@ -45,8 +45,9 @@ inline ROOT::RDF::RNode FilterThreshold(ROOT::RDF::RNode df,
 /// 
 // clang-format on
 inline ROOT::RDF::RNode Filter(ROOT::RDF::RNode df,
-                               const std::string &filterExpression) {
-    return df.Filter(filterExpression);
+                               const std::string &filterExpression,
+                               const std::string &filtername) {
+    return df.Filter(filterExpression, filtername);
 }
 
 /**

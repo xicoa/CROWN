@@ -144,7 +144,7 @@ BaseElectrons = ProducerGroup(
         ElectronHOverECut,
         ElectronEInvMinusPInvCutMax,
         ElectronEInvMinusPInvCutMin,
-        ElectronDeepCSVClosestCut,
+        # ElectronDeepCSVClosestCut,
         # ElectronIDCut,
         # ElectronConvVeto,
         # Electron_mvaTTH_Cut,

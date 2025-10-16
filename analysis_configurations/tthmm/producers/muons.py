@@ -89,31 +89,33 @@ MuonMiniIsoCut = Producer(
 )
 MuonDeepCSVClosestCut = Producer(
     name="MuonDeepCSVClosestCut",
-    call="physicsobject::CutVarMaxClosestObjPiecewise({df}, {output}, {input}, {max_muon_deepCSVClosest_barrel}, {max_muon_deepCSVClosest_endcap}, {threshold_barrel_endcap}, 1)",
-    input=[nanoAOD.Jet_btagDeepB,
-           nanoAOD.Jet_eta,
-           nanoAOD.Jet_phi,
-           nanoAOD.Muon_eta,
-           nanoAOD.Muon_phi,
-           nanoAOD.Muon_eta],
+    call="physicsobject::CutVarMaxClosestObj({df}, {output}, {input}, {max_muon_deepCSVClosest})",
+    input=[
+        nanoAOD.Jet_btagDeepB,
+        nanoAOD.Jet_eta,
+        nanoAOD.Jet_phi,
+        q.good_jet_collection,
+        nanoAOD.Muon_eta,
+        nanoAOD.Muon_phi
+    ],
     output=[],
-    scopes=["global","tthmm"]
+    scopes=["global"]
 )
 BaseMuons = ProducerGroup(
     name="BaseMuons",
     call="physicsobject::CombineMasks({df}, {output}, {input})",
     input=[],
     output=[q.base_muons_mask],
-    scopes=["global","vbfhmm","gghmm","tthmm"],
+    scopes=["global"],
     subproducers=[
         MuonPtCut,
         MuonEtaCut,
+        MuonIDCut,
         MuonDxyCut,
         MuonDzCut,
         MuonSIP3DCut,
-        MuonIDCut,
         MuonMiniIsoCut,
-        MuonDeepCSVClosestCut,
+        # MuonDeepCSVClosestCut,
     ],
 )
 

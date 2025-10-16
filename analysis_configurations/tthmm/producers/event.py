@@ -401,20 +401,20 @@ ApplyRoccoRMC = ProducerGroup(
 ##
 
 #veto ttH
-VetottHLooseB = Producer(
-    name="VetottHLooseB",
-    call='basefunctions::FilterThreshold({df}, {input}, {vetottH_max_nbjets_loose}, "<=", "Veto ttH <= 1 bjet loose")',
-    input=[q.nbjets_loose],
-    output=None,
-    scopes=["gghmm","vbfhmm"],
-)
-VetottHMediumB = Producer(
-    name="VetottHMediumB",
-    call='basefunctions::FilterThreshold({df}, {input}, {vetottH_max_nbjets_medium}, "<=", "Veto ttH <= 0 bjet medium")',
-    input=[q.nbjets_medium],
-    output=None,
-    scopes=["gghmm","vbfhmm"],
-)
+# VetottHLooseB = Producer(
+#     name="VetottHLooseB",
+#     call='basefunctions::FilterThreshold({df}, {input}, {vetottH_max_nbjets_loose}, "<=", "Veto ttH <= 1 bjet loose")',
+#     input=[q.nbjets_loose],
+#     output=None,
+#     scopes=["gghmm","vbfhmm"],
+# )
+# VetottHMediumB = Producer(
+#     name="VetottHMediumB",
+#     call='basefunctions::FilterThreshold({df}, {input}, {vetottH_max_nbjets_medium}, "<=", "Veto ttH <= 0 bjet medium")',
+#     input=[q.nbjets_medium],
+#     output=None,
+#     scopes=["gghmm","vbfhmm"],
+# )
 
 #veto VH
 VetoVHMuon = Producer(
@@ -436,7 +436,7 @@ VetoVHElectron = Producer(
 # ttH
 FilterNBjet_ttH = Producer(
     name="FilterNBjet_ttH",
-    call='basefunctions::Filter({df}, "({input_0} >= {ttH_min_nbjets_loose}) || ({input_1} >= {ttH_min_nbjets_medium})")',
+    call='basefunctions::Filter({df}, "({input_0} >= {ttH_min_nbjets_loose}) || ({input_1} >= {ttH_min_nbjets_medium})", "N_Bjet_Filter (loose >= 2 or medium >=1)")',
     input=[q.nbjets_loose,q.nbjets_medium],
     output=None,
     scopes=["global","tthmm"]
@@ -659,7 +659,7 @@ DiMuonHiggsCandCollection = Producer(
            nanoAOD.Muon_phi, 
            nanoAOD.Muon_mass,
            nanoAOD.Muon_charge,
-           q.good_muon_collection],
+           q.good_muons_mask],
     output=[q.dimuon_HiggsCand_collection],
     scopes=["global","gghmm","vbfhmm","tthmm","e2m","m2m","eemm","nnmm","fjmm"],
 )
@@ -937,9 +937,9 @@ Calc_MT_muOS_MHT = Producer(
 #     scopes=["e2m","m2m"],
 # )
 ### cut flag
-FilterFlagDiMuFromH = Producer(
+FilterFlagDiMuonFromHiggs = Producer(
     name="FilterFlagDiMuFromH",
-    call='basefunctions::FilterThreshold({df}, {input}, {flag_DiMuonFromHiggs}, "==", "DiMuon From Higgs")',
+    call='basefunctions::FilterThreshold({df}, {input}, {flag_DiMuonFromHiggs}, "==", "Flag_DiMuonFromHiggs")',
     input=[q.Flag_DiMuonFromHiggs],
     output=None,
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m","eemm","mmmm","nnmm","fjmm"],

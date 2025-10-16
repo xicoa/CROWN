@@ -510,10 +510,21 @@ def build_config(
             "max_muon_dz": 0.10,
             "max_sip3d": 8,
             "muon_mini_iso_cut": 0.4,
-            "max_muon_deepCSVClosest_barrel": 0.8958,
-            "max_muon_deepCSVClosest_endcap": 0.8001,
         }
     )
+    configuration.add_config_parameters(
+        ["global","tthmm"],
+        {
+            "max_muon_deepCSVClosest": EraModifier(
+                {
+                    "2016": 0.8958,
+                    "2017": 0.8001,
+                    "2018": 0.8001
+                }
+            ),
+        },
+    )
+
     # electron selection
     configuration.add_config_parameters(
         ["global","tthmm"],
@@ -547,16 +558,15 @@ def build_config(
             event.PUweights,
             event.Lumi,
             event.MetFilter,
-            muons.BaseMuons,
             electrons.BaseElectrons,
-            jets.JetEnergyCorrection, # vh include pt corr and mass corr
-            jets.GoodJets, # vh overlap removal with ?base? muons done [need validation]
+            jets.JetEnergyCorrection,
+            jets.GoodJets,
             jets.GoodBJetsLoose, 
             jets.GoodBJetsMedium, 
             jets.NumberOfGoodJets,
             jets.NumberOfLooseB,
             jets.NumberOfMediumB,
-            met.MetBasics, # build met vector for calculation
+            met.MetBasics,
             met.BuildGenMetVector,
             jets.JetCollection,
             jets.Calc_MHT,
@@ -565,6 +575,7 @@ def build_config(
             fatjets.NumberOfGoodFatJets,
             fatjets.FatJetCollection,
             fatjets.LVFatJet1,
+            muons.BaseMuons,
             event.FilterNBjet_ttH,
             
         ],
@@ -574,83 +585,83 @@ def build_config(
     
     # region vbfhmm producers
     
-    configuration.add_producers(
-        "vbfhmm",
-        [
-            muons.GoodMuons, # vh tighter selections on muons
-            muons.NumberOfGoodMuons,
-           # muons.MuonIDCut,
-            event.FilterNMuons, # vh ==3 muons
-            muons.MuonCollection, # collect ordered by pt
-            ###
-            event.DiMuonHiggsCandCollection, # dimuonHiggs index
-            event.Flag_DiMuonFromHiggs,
-            event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
-            ###
-            event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
-            event.VetoVHElectron,
-            event.VetoVHMuon,
-            jets.FilterNJets,
-            # event.LeadMuonPtCut,
-            # event.LeadJetPtCut,
-            # event.SubleadJetPtCut,
-            # event.DiJetMassCut,
-            # event.DiJetEtaCut,
-            lepton.LeptonChargeSumVeto,
-            ###
-            electrons.NumberOfBaseElectrons,
-            electrons.ElectronCollection,
-            ###
-            jets.LVJet1,
-            jets.LVJet2,
-            jets.LVJet3,
+    # configuration.add_producers(
+    #     "vbfhmm",
+    #     [
+    #         muons.GoodMuons, # vh tighter selections on muons
+    #         muons.NumberOfGoodMuons,
+    #        # muons.MuonIDCut,
+    #         event.FilterNMuons, # vh ==3 muons
+    #         muons.MuonCollection, # collect ordered by pt
+    #         ###
+    #         event.DiMuonHiggsCandCollection, # dimuonHiggs index
+    #         event.Flag_DiMuonFromHiggs,
+    #         event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
+    #         ###
+    #         event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
+    #         event.VetoVHElectron,
+    #         event.VetoVHMuon,
+    #         jets.FilterNJets,
+    #         # event.LeadMuonPtCut,
+    #         # event.LeadJetPtCut,
+    #         # event.SubleadJetPtCut,
+    #         # event.DiJetMassCut,
+    #         # event.DiJetEtaCut,
+    #         lepton.LeptonChargeSumVeto,
+    #         ###
+    #         electrons.NumberOfBaseElectrons,
+    #         electrons.ElectronCollection,
+    #         ###
+    #         jets.LVJet1,
+    #         jets.LVJet2,
+    #         jets.LVJet3,
             
-            # flag cut
-            event.FilterFlagDiMuFromH,
-            event.FilterFlagLepChargeSum,
-            ###
-            muons.Mu1_H,
-            muons.Mu2_H,
-            ###
-            event.mumuH_dR,
-            ###
-            event.mu1_mu2_dphi,
-            #
-            muons.LVMu1,
-            muons.LVMu2,
-            triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel, 
-            # vh the trigger-matched muon should have pT > 29 (26) for 2017 (2016,18)
+    #         # flag cut
+    #         event.FilterFlagDiMuFromH,
+    #         event.FilterFlagLepChargeSum,
+    #         ###
+    #         muons.Mu1_H,
+    #         muons.Mu2_H,
+    #         ###
+    #         event.mumuH_dR,
+    #         ###
+    #         event.mu1_mu2_dphi,
+    #         #
+    #         muons.LVMu1,
+    #         muons.LVMu2,
+    #         triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel, 
+    #         # vh the trigger-matched muon should have pT > 29 (26) for 2017 (2016,18)
             
             
-            # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
-            p4.mu1_fromH_pt,
-            p4.mu1_fromH_eta,
-            p4.mu1_fromH_phi,
-            p4.mu2_fromH_pt,
-            p4.mu2_fromH_eta,
-            p4.mu2_fromH_phi,
-            p4.met_pt,
-            p4.met_phi,
-            p4.H_pt,
-            p4.H_eta,
-            p4.H_phi,
-            p4.H_mass,
-            p4.jet1_pt,
-            p4.jet1_eta,
-            p4.jet1_phi,
-            p4.jet1_mass,
-            p4.jet2_pt,
-            p4.jet2_eta,
-            p4.jet2_phi,
-            p4.jet2_mass,
-            jets.DiJetMass,
-            jets.DiJetEta,
+    #         # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
+    #         p4.mu1_fromH_pt,
+    #         p4.mu1_fromH_eta,
+    #         p4.mu1_fromH_phi,
+    #         p4.mu2_fromH_pt,
+    #         p4.mu2_fromH_eta,
+    #         p4.mu2_fromH_phi,
+    #         p4.met_pt,
+    #         p4.met_phi,
+    #         p4.H_pt,
+    #         p4.H_eta,
+    #         p4.H_phi,
+    #         p4.H_mass,
+    #         p4.jet1_pt,
+    #         p4.jet1_eta,
+    #         p4.jet1_phi,
+    #         p4.jet1_mass,
+    #         p4.jet2_pt,
+    #         p4.jet2_eta,
+    #         p4.jet2_phi,
+    #         p4.jet2_mass,
+    #         jets.DiJetMass,
+    #         jets.DiJetEta,
             
-            p4.genmet_pt,
-            p4.genmet_phi,
+    #         p4.genmet_pt,
+    #         p4.genmet_phi,
 
-        ],
-    )
+    #     ],
+    # )
     # endregion
     
     # region tthmm producers
@@ -680,7 +691,7 @@ def build_config(
             jets.LVJet2,
             jets.LVJet3,
             # flag cut
-            event.FilterFlagDiMuFromH,
+            event.FilterFlagDiMuonFromHiggs,
             ###
             muons.Mu1_H,
             muons.Mu2_H,
