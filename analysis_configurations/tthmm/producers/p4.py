@@ -548,7 +548,43 @@ fatjet_mass = Producer(
 )
 
 ##### Jet for VBF channel 
-#####
+
+bjet1_pt = Producer(
+    name="bjet1_pt",
+    call='quantities::pt({df}, {output}, {input})',
+    input=[
+      q.bjet_p4_1,
+    ],
+    output=[q.bjet1_pt],
+    scopes=["vbfhmm","tthmm"],
+)
+bjet1_mass = Producer(
+    name="bjet1_mass",
+    call='quantities::mass({df}, {output}, {input})',
+    input=[
+      q.bjet_p4_1,
+    ],
+    output=[q.bjet1_mass],
+    scopes=["vbfhmm","tthmm"],
+)
+bjet1_eta = Producer(
+    name="bjet1_eta",
+    call='quantities::eta({df}, {output}, {input})',
+    input=[
+      q.bjet_p4_1,
+    ],
+    output=[q.bjet1_eta],
+    scopes=["vbfhmm","tthmm"],
+)
+bjet1_phi = Producer(
+    name="bjet1_phi",
+    call='quantities::phi({df}, {output}, {input})',
+    input=[
+      q.bjet_p4_1,
+    ],
+    output=[q.bjet1_phi],
+    scopes=["vbfhmm","tthmm"],
+)
 jet1_pt = Producer(
     name="jet1_pt",
     call='quantities::pt({df}, {output}, {input})',
@@ -658,4 +694,22 @@ jet3_mass = Producer(
     ],
     output=[q.jet3_mass],
     scopes=["vbfhmm","tthmm"],
+)
+
+# portion of other dimentional vectors also be produced here
+
+Ht_vector_pt = Producer(
+    name="Ht_vector_pt",
+    call='quantities::quantity_float({df}, {output}, {input}, -1, 0)',
+    input=[q.Ht_vector],
+    output=[q.Ht_vector_pt],
+    scopes=["global", "tthmm"],
+)
+
+Ht_vector_phi = Producer(
+    name="Ht_vector_phi",
+    call='quantities::quantity_float({df}, {output}, {input}, -1, 1)',
+    input=[q.Ht_vector],
+    output=[q.Ht_vector_phi],
+    scopes=["global", "tthmm"],
 )

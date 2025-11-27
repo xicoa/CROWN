@@ -286,6 +286,20 @@ JetCollection = Producer(
     output=[q.good_jet_collection],
     scopes=["global"],
 )
+
+BJet1 = Producer(
+    name="BJet1",
+    call="lorentzvectors::build({df}, {input_vec}, 0, {output})",
+    input=[
+        q.good_bjets_mask_loose,
+        q.Jet_pt_corrected,
+        nanoAOD.Jet_eta,
+        nanoAOD.Jet_phi,
+        q.Jet_mass_corrected,
+    ],
+    output=[q.bjet_p4_1],
+    scopes=["global","vbfhmm","tthmm"],
+)
 LVJet1 = Producer(
     name="LVJet1",
     call="lorentzvectors::build({df}, {input_vec}, 0, {output})",

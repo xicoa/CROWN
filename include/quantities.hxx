@@ -137,5 +137,27 @@ ROOT::RDF::RNode id(ROOT::RDF::RNode df, const std::string &outputname,
                     const int &position, const std::string &pairname,
                     const std::string &idcolumn);
 } // end namespace electron
+ROOT::RDF::RNode quantity_float(ROOT::RDF::RNode df,
+                                const std::string &outputname,
+                                const std::string &column,
+                                const std::string &array, const int &position);
+ROOT::RDF::RNode quantity_float(ROOT::RDF::RNode df,
+                                const std::string &outputname,
+                                const std::string &quantity, const int &array,
+                                const int &position);
+ROOT::RDF::RNode quantity_int(ROOT::RDF::RNode df,
+                              const std::string &outputname,
+                              const std::string &column,
+                              const std::string &array, const int &position);
+ROOT::RDF::RNode quantity_int(ROOT::RDF::RNode df,
+                              const std::string &outputname,
+                              const std::string &quantity, const int &array,
+                              const int &position);
+
+ROOT::RDF::RNode
+quantity_closest_obj(ROOT::RDF::RNode df, const std::string &maskname,
+                     const std::string &quantity, const std::string &objEta,
+                     const std::string &objPhi, const std::string &objMask,
+                     const std::string &thisEta, const std::string &thisPhi);
 } // end namespace quantities
 #endif /* GUARD_QUANTITIES_H */

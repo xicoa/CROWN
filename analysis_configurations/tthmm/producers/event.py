@@ -150,6 +150,41 @@ MetFilter = VectorProducer(
     vec_configs=["met_filters"],
 )
 
+Ht_scalar = Producer(
+    name="Ht_scalar",
+    call='physicsobject::HtScalar({df}, {output}, {input}, {ttH_max_jet_eta_for_ht})',
+    input=[
+        nanoAOD.Muon_pt,
+        q.good_muon_collection,
+        nanoAOD.Electron_pt,
+        q.base_electron_collection,
+        q.Jet_pt_corrected,
+        nanoAOD.Jet_eta,
+        q.good_jet_collection,
+    ],
+    output=[q.Ht_scalar],
+    scopes=["global", "tthmm"],
+)
+
+Ht_vector = Producer(
+    name="Ht_vector",
+    call='physicsobject::HtVectorPtAndPhi({df}, {output}, {input}, {ttH_max_jet_eta_for_ht})',
+    input=[
+        nanoAOD.Muon_pt,
+        nanoAOD.Muon_phi,
+        q.good_muon_collection,
+        nanoAOD.Electron_pt,
+        nanoAOD.Electron_phi,
+        q.base_electron_collection,
+        q.Jet_pt_corrected,
+        nanoAOD.Jet_phi,
+        nanoAOD.Jet_eta,
+        q.good_jet_collection,
+    ],
+    output=[q.Ht_vector],
+    scopes=["global", "tthmm"],
+)
+
 Lumi = Producer(
     name="Lumi",
     call="basefunctions::rename<UInt_t>({df}, {input}, {output})",
@@ -583,6 +618,20 @@ Flag_DiMuonFromHiggs = Producer(
     output=[q.Flag_DiMuonFromHiggs],
     scopes=["global","vbfhmm","tthmm"],
 )
+CheckDiMuon = Producer(
+    name="CheckDiMuon",
+    call='physicsobject::CheckDiMuon({df}, {input})',
+    output=None,
+    input=[
+        q.good_muon_collection,
+        q.good_muons_mask,
+        q.Flag_DiMuonFromHiggs,
+        q.dimuon_HiggsCand_collection,
+        q.nmuons,
+    ],
+    scopes=["global","tthmm"]
+)
+
 HiggsToDiMuonPair_p4 = Producer(
     name="HiggsToDiMuonPair_p4",
     call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
@@ -659,7 +708,7 @@ DiMuonHiggsCandCollection = Producer(
            nanoAOD.Muon_phi, 
            nanoAOD.Muon_mass,
            nanoAOD.Muon_charge,
-           q.good_muons_mask],
+           q.good_muon_collection],
     output=[q.dimuon_HiggsCand_collection],
     scopes=["global","gghmm","vbfhmm","tthmm","e2m","m2m","eemm","nnmm","fjmm"],
 )

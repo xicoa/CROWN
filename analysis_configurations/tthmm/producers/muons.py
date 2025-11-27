@@ -6,20 +6,19 @@ from code_generation.producer import Producer, ProducerGroup
 # Set of producers used for loosest selection of muons
 ####################
 
-Muon_pTErr_1 = Producer(
-    name="Muon_pTErr_1",
-    call="quantities::ptErr({df}, {output}, 0, {input})",
-    input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_ptErr],
-    output=[q.mu1_fromH_ptErr],
-    scopes=["vbfhmm","tthmm"],
-)
-
-Muon_pTErr_2 = Producer(
-    name="Muon_pTErr_2",
-    call="quantities::ptErr({df}, {output}, 1, {input})",
-    input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_ptErr],
-    output=[q.mu2_fromH_ptErr],
-    scopes=["vbfhmm","tthmm"],
+Muon_DeepCSVClosest = Producer(
+    name="Muon_DeepCSVClosest",
+    call='quantities::quantity_closest_obj({df}, {output}, {input})',
+    input=[
+        nanoAOD.Jet_btagDeepB,
+        nanoAOD.Jet_eta,
+        nanoAOD.Jet_phi,
+        q.good_jet_collection,
+        nanoAOD.Muon_eta,
+        nanoAOD.Muon_phi
+    ],
+    output=[q.muon_DeepCSVClosest],
+    scopes=["global","tthmm"]
 )
 
 MuonPtCut = Producer(
@@ -99,7 +98,7 @@ MuonDeepCSVClosestCut = Producer(
         nanoAOD.Muon_phi
     ],
     output=[],
-    scopes=["global"]
+    scopes=["global","tthmm"]
 )
 BaseMuons = ProducerGroup(
     name="BaseMuons",
@@ -172,6 +171,7 @@ GoodMuons = ProducerGroup(
     output=[q.good_muons_mask], # vh these are the final selection muons' mask
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m", "eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
     subproducers=[
+        # MuonDeepCSVClosestCut
         # GoodMuonPtCut,
         # GoodMuonEtaCut,
         # GoodMuonIDCut,
@@ -413,4 +413,159 @@ muon2_iso = Producer(
     input=[q.good_muon_collection, nanoAOD.Muon_pfRelIso04_all],
     output=[q.muon2_iso],
     scopes=["vbfhmm"],
+)
+Mu1_H = Producer(
+    name="Mu1_H",
+    call="lorentzvectors::build({df}, {input_vec}, 0, {output})",
+    input=[
+        q.dimuon_HiggsCand_collection,
+        nanoAOD.Muon_pt,
+        nanoAOD.Muon_eta,
+        nanoAOD.Muon_phi,
+        nanoAOD.Muon_mass,
+    ],
+    output=[q.muon_leadingp4_H],
+    scopes=["global","tthmm"],
+)
+Mu1_H_charge = Producer(
+    name="Mu1_H_charge",
+    call='quantities::quantity_int({df}, {output}, {input}, 0)',
+    input=[
+        nanoAOD.Muon_charge,
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_charge],
+    scopes=["global","tthmm"],
+)
+Mu1_H_dxy = Producer(
+    name="Mu1_H_dxy",
+    call='quantities::quantity_float({df}, {output}, "Muon_dxy",  {input}, 0)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_dxy],
+    scopes=["global","tthmm"],
+)
+Mu1_H_dz = Producer(
+    name="Mu1_H_dz",
+    call='quantities::quantity_float({df}, {output}, "Muon_dz",  {input}, 0)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_dz],
+    scopes=["global","tthmm"],
+)
+Mu1_H_SIP3D = Producer(
+    name="Mu1_H_SIP3D",
+    call='quantities::quantity_float({df}, {output}, "Muon_sip3d",  {input}, 0)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_sip3d],
+    scopes=["global","tthmm"],
+)
+Mu1_H_MiniIso = Producer(
+    name="Mu1_H_MiniIso",
+    call='quantities::quantity_float({df}, {output}, "Muon_miniPFRelIso_all",  {input}, 0)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_miniIso],
+    scopes=["global","tthmm"],
+)
+Mu1_H_pTErr = Producer(
+    name="Mu1_H_pTErr",
+    call="quantities::ptErr({df}, {output}, 0, {input})",
+    input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_ptErr],
+    output=[q.mu1_fromH_ptErr],
+    scopes=["global","tthmm"],
+)
+Mu1_H_DeepCSVClosest = Producer(
+    name="Mu1_H_DeepCSVClosest",
+    call='quantities::quantity_float({df}, {output}, {input}, 0)',
+    input=[
+        q.muon_DeepCSVClosest,
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_deepCSVClosest],
+    scopes=["global","tthmm"],
+)
+
+
+
+Mu2_H = Producer(
+    name="Mu2_H",
+    call="lorentzvectors::build({df}, {input_vec}, 1, {output})",
+    input=[
+        q.dimuon_HiggsCand_collection,
+        nanoAOD.Muon_pt,
+        nanoAOD.Muon_eta,
+        nanoAOD.Muon_phi,
+        nanoAOD.Muon_mass,
+    ],
+    output=[q.muon_subleadingp4_H],
+    scopes=["global","tthmm"],
+)
+Mu2_H_charge = Producer(
+    name="Mu2_H_charge",
+    call='quantities::quantity_int({df}, {output}, {input}, 1)',
+    input=[
+        nanoAOD.Muon_charge,
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_charge],
+    scopes=["global","tthmm"],
+)
+Mu2_H_dxy = Producer(
+    name="Mu2_H_dxy",
+    call='quantities::quantity_float({df}, {output}, "Muon_dxy", {input}, 1)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_dxy],
+    scopes=["global","tthmm"],
+)
+Mu2_H_dz = Producer(
+    name="Mu2_H_dz",
+    call='quantities::quantity_float({df}, {output}, "Muon_dz", {input}, 1)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_dz],
+    scopes=["global","tthmm"],
+)
+Mu2_H_SIP3D = Producer(
+    name="Mu2_H_SIP3D",
+    call='quantities::quantity_float({df}, {output}, "Muon_sip3d",  {input}, 0)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_sip3d],
+    scopes=["global","tthmm"],
+)
+Mu2_H_MiniIso = Producer(
+    name="Mu2_H_MiniIso",
+    call='quantities::quantity_float({df}, {output}, "Muon_miniPFRelIso_all",  {input}, 0)',
+    input=[
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_miniIso],
+    scopes=["global","tthmm"],
+)
+Mu2_H_pTErr = Producer(
+    name="Mu2_H_pTErr",
+    call="quantities::ptErr({df}, {output}, 1, {input})",
+    input=[q.dimuon_HiggsCand_collection, nanoAOD.Muon_ptErr],
+    output=[q.mu2_fromH_ptErr],
+    scopes=["global","tthmm"],
+)
+Mu2_H_DeepCSVClosest = Producer(
+    name="Mu2_H_DeepCSVClosest",
+    call='quantities::quantity_float({df}, {output}, {input}, 0)',
+    input=[
+        q.muon_DeepCSVClosest,
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_deepCSVClosest],
+    scopes=["global","tthmm"],
 )

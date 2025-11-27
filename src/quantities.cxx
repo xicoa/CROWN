@@ -1037,5 +1037,115 @@ ROOT::RDF::RNode id(ROOT::RDF::RNode df, const std::string &outputname,
         {pairname, idcolumn});
 }
 } // end namespace electron
+
+// Return the array[position]-th element of quantity
+ROOT::RDF::RNode quantity_float(ROOT::RDF::RNode df,
+                                const std::string &outputname,
+                                const std::string &quantity,
+                                const std::string &array, const int &position) {
+    auto lambda = [&position](const ROOT::RVec<int> array,
+                             const ROOT::RVec<float> &quantity) {
+        int index = array.at(position, -1);
+        return quantity.at(index, default_float);
+    };
+    return df.Define(outputname, lambda, {array, quantity});
+}
+
+// Return the position-th element of quantity
+// In this function, one can directly use quantity_float(df, "N", "Q", -1, i) to get Q[i]
+// Defination contains parameter "array" instead of removing it
+// in order to prevent bugs caused by missing a single parameter
+// one should always pass array parameter as -1
+
+ROOT::RDF::RNode quantity_float(ROOT::RDF::RNode df,
+                                const std::string &outputname,
+                                const std::string &quantity,
+                                const int &array,
+                                const int &position) {
+    if (array != -1) {
+        Logger::get("quantity_float")
+            ->error("The parameter 'array' is not used correctly in the "
+                    "quantity_float function. Please always set it to -1.");
+        throw std::invalid_argument(
+            "The parameter 'array' is not used correctly in the "
+            "quantity_float function. Please always set it to -1.");
+    }
+    auto lambda = [position](const ROOT::RVec<float> &quantity) {
+        Logger::get("quantity_float")
+            ->debug("quantity has quantity[0] = {}, quantity[1] = {}, now "
+                    "getting position {}, quantity of this index is {}.",
+                    quantity.at(0), quantity.at(1), position,
+                    quantity.at(position, default_float));
+        return quantity.at(position, default_float);
+    };
+    return df.Define(outputname, lambda, {quantity});
+}
+
+// Return the array[position]-th element of quantity
+ROOT::RDF::RNode quantity_int(ROOT::RDF::RNode df,
+                              const std::string &outputname,
+                              const std::string &quantity,
+                              const std::string &array, const int &position) {
+    auto lambda = [&position](const ROOT::RVec<int> array,
+                             const ROOT::RVec<int> &quantity) {
+        int index = array.at(position, -1);
+        return quantity.at(index, -100);
+    };
+    return df.Define(outputname, lambda, {array, quantity});
+}
+
+// similar to quantity_float but for int quantities
+// be careful about the default value
+ROOT::RDF::RNode quantity_int(ROOT::RDF::RNode df,
+                                const std::string &outputname,
+                                const std::string &quantity,
+                                const int &array,
+                                const int &position) {
+    if (array != -1) {
+        Logger::get("quantity_int")
+            ->error("The parameter 'array' is not used correctly in the "
+                    "quantity_int function. Please always set it to -1.");
+        throw std::invalid_argument(
+            "The parameter 'array' is not used correctly in the "
+            "quantity_int function. Please always set it to -1.");
+    }
+    auto lambda = [&position](const ROOT::RVec<int> &quantity) {
+        return quantity.at(position, default_int);
+    };
+    return df.Define(outputname, lambda, {quantity});
+}
+
+ROOT::RDF::RNode
+quantity_closest_obj(ROOT::RDF::RNode df, const std::string &maskname,
+                   const std::string &quantity, const std::string &objEta,
+                   const std::string &objPhi, const std::string &objMask,
+                   const std::string &thisEta, const std::string &thisPhi) {
+    auto lambda =
+        [](const ROOT::RVec<float> &q, const ROOT::RVec<float> &oEta,
+           const ROOT::RVec<float> &oPhi, const ROOT::RVec<int> &oMask,
+           const ROOT::RVec<float> &tEta, const ROOT::RVec<float> &tPhi) {
+        ROOT::RVec<float> quantities(tEta.size(), 1);
+        for (size_t i = 0; i < tEta.size(); i++) {
+            float minDR = 1000.0;
+            float closestObjQuantity = -1000.0;
+            for (size_t j = 0; j < oMask.size(); j++) {
+                int oIndex = oMask[j];
+                float dEta = tEta[i] - oEta[oIndex];
+                float dPhi = tPhi[i] - oPhi[oIndex];
+                float deltaRSquare = dEta * dEta + dPhi * dPhi;
+                if (deltaRSquare < minDR) {
+                    minDR = deltaRSquare;
+                    closestObjQuantity = q[oIndex];
+                }
+            }
+            quantities[i] = closestObjQuantity;
+        }
+        return quantities;
+    };
+    auto df1 = df.Define(maskname, lambda,
+                         {quantity, objEta, objPhi, objMask, thisEta, thisPhi});
+    return df1;
+}
+
 } // end namespace quantities
 #endif /* GUARD_QUANTITIES_H */

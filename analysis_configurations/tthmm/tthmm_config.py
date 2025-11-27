@@ -454,9 +454,9 @@ def build_config(
     configuration.add_config_parameters(
         ["gghmm","vbfhmm"],
         {
-            "vetottH_max_nbjets_loose" : 1,
-            "vetottH_max_nbjets_medium" : 0,
-            "vh_njets" : 3,
+            "vetottH_max_nbjets_loose": 1,
+            "vetottH_max_nbjets_medium": 0,
+            "vh_njets": 3,
         }
     )
 
@@ -464,8 +464,8 @@ def build_config(
     configuration.add_config_parameters(
         ["gghmm","vbfhmm"],
         {
-            "vetoVH_max_nmuons" : 2,
-            "vetoVH_max_nelectrons" : 0,
+            "vetoVH_max_nmuons": 2,
+            "vetoVH_max_nelectrons": 0,
         }
     )
 
@@ -473,15 +473,15 @@ def build_config(
     configuration.add_config_parameters(
         ["vbfhmm"],
         {
-            "vbf_nmuons" : 2,
-            "flag_DiMuonFromHiggs" : 1,
-            "lead_muon_pt" : 26,
-            # "dimuon_pair" : 1, # dimuon_pair in [110,150] >=1
-            "vbf_njets" : 2,
-            "lead_jet_pt" : 35, #lead jet pt > 35
-            "sublead_jet_pt" : 25, #sublead jet pt > 25
-            "dijet_mass" : 400, #dijet mass > 400
-            "dijet_eta" : 2.5, #jet-jet delta eta > 2.5
+            "vbf_nmuons": 2,
+            "flag_DiMuonFromHiggs": 1,
+            "lead_muon_pt": 26,
+            # "dimuon_pair": 1, # dimuon_pair in [110,150] >=1
+            "vbf_njets": 2,
+            "lead_jet_pt": 35, #lead jet pt > 35
+            "sublead_jet_pt": 25, #sublead jet pt > 25
+            "dijet_mass": 400, #dijet mass > 400
+            "dijet_eta": 2.5, #jet-jet delta eta > 2.5
         }
     )
 
@@ -494,9 +494,10 @@ def build_config(
     configuration.add_config_parameters(
         ["global","tthmm"],
         {
-            "ttH_min_nbjets_loose" : 2,
-            "ttH_min_nbjets_medium" : 1,
-            "flag_DiMuonFromHiggs" : 1,
+            "ttH_max_jet_eta_for_ht": 2.5,
+            "ttH_min_nbjets_loose": 2,
+            "ttH_min_nbjets_medium": 1,
+            "flag_DiMuonFromHiggs": 1,
         }
     )
     # muon selection TODO
@@ -582,88 +583,7 @@ def build_config(
     )
     
     # endregion
-    
-    # region vbfhmm producers
-    
-    # configuration.add_producers(
-    #     "vbfhmm",
-    #     [
-    #         muons.GoodMuons, # vh tighter selections on muons
-    #         muons.NumberOfGoodMuons,
-    #        # muons.MuonIDCut,
-    #         event.FilterNMuons, # vh ==3 muons
-    #         muons.MuonCollection, # collect ordered by pt
-    #         ###
-    #         event.DiMuonHiggsCandCollection, # dimuonHiggs index
-    #         event.Flag_DiMuonFromHiggs,
-    #         event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
-    #         ###
-    #         event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
-    #         event.VetoVHElectron,
-    #         event.VetoVHMuon,
-    #         jets.FilterNJets,
-    #         # event.LeadMuonPtCut,
-    #         # event.LeadJetPtCut,
-    #         # event.SubleadJetPtCut,
-    #         # event.DiJetMassCut,
-    #         # event.DiJetEtaCut,
-    #         lepton.LeptonChargeSumVeto,
-    #         ###
-    #         electrons.NumberOfBaseElectrons,
-    #         electrons.ElectronCollection,
-    #         ###
-    #         jets.LVJet1,
-    #         jets.LVJet2,
-    #         jets.LVJet3,
-            
-    #         # flag cut
-    #         event.FilterFlagDiMuFromH,
-    #         event.FilterFlagLepChargeSum,
-    #         ###
-    #         muons.Mu1_H,
-    #         muons.Mu2_H,
-    #         ###
-    #         event.mumuH_dR,
-    #         ###
-    #         event.mu1_mu2_dphi,
-    #         #
-    #         muons.LVMu1,
-    #         muons.LVMu2,
-    #         triggers.GenerateSingleMuonTriggerFlagsForDiMuChannel, 
-    #         # vh the trigger-matched muon should have pT > 29 (26) for 2017 (2016,18)
-            
-            
-    #         # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
-    #         p4.mu1_fromH_pt,
-    #         p4.mu1_fromH_eta,
-    #         p4.mu1_fromH_phi,
-    #         p4.mu2_fromH_pt,
-    #         p4.mu2_fromH_eta,
-    #         p4.mu2_fromH_phi,
-    #         p4.met_pt,
-    #         p4.met_phi,
-    #         p4.H_pt,
-    #         p4.H_eta,
-    #         p4.H_phi,
-    #         p4.H_mass,
-    #         p4.jet1_pt,
-    #         p4.jet1_eta,
-    #         p4.jet1_phi,
-    #         p4.jet1_mass,
-    #         p4.jet2_pt,
-    #         p4.jet2_eta,
-    #         p4.jet2_phi,
-    #         p4.jet2_mass,
-    #         jets.DiJetMass,
-    #         jets.DiJetEta,
-            
-    #         p4.genmet_pt,
-    #         p4.genmet_phi,
-
-    #     ],
-    # )
-    # endregion
-    
+        
     # region tthmm producers
     # add by hao
     
@@ -674,12 +594,18 @@ def build_config(
             muons.NumberOfGoodMuons,
             muons.MuonCollection, # collect ordered by pt
             
+            event.Ht_scalar,
+            event.Ht_vector,
+            p4.Ht_vector_pt,
+            p4.Ht_vector_phi,
+            
             event.DiMuonHiggsCandCollection, # dimuonHiggs index
             event.Flag_DiMuonFromHiggs,
             event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
             ###
             event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
             event.Flag_DiElectronMassFromZVeto,
+            event.CheckDiMuon,
             # event.LeadJetPtCut,
             # event.SubleadJetPtCut,
             # event.DiJetMassCut,
@@ -687,6 +613,7 @@ def build_config(
             electrons.NumberOfBaseElectrons,
             electrons.ElectronCollection,
             ###
+            jets.BJet1,
             jets.LVJet1,
             jets.LVJet2,
             jets.LVJet3,
@@ -724,22 +651,39 @@ def build_config(
             p4.extra_electron_eta,
 
             # scalefactors.MuonIDIso_SF, # TODO 3 muon SF
+            muons.Muon_DeepCSVClosest,
             p4.mu1_fromH_pt,
             p4.mu1_fromH_eta,
             p4.mu1_fromH_phi,
             p4.mu1_fromH_mass,
-            muons.Muon_pTErr_1,
+            muons.Mu1_H_charge,
+            muons.Mu1_H_pTErr,
+            muons.Mu1_H_dxy,
+            muons.Mu1_H_dz,
+            muons.Mu1_H_SIP3D,
+            muons.Mu1_H_MiniIso,
+            muons.Mu1_H_DeepCSVClosest,
             p4.mu2_fromH_pt,
             p4.mu2_fromH_eta,
             p4.mu2_fromH_phi,
             p4.mu2_fromH_mass,
-            muons.Muon_pTErr_2,
+            muons.Mu2_H_charge,
+            muons.Mu2_H_pTErr,
+            muons.Mu2_H_dxy,
+            muons.Mu2_H_dz,
+            muons.Mu2_H_SIP3D,
+            muons.Mu2_H_MiniIso,
+            muons.Mu2_H_DeepCSVClosest,
             p4.met_pt,
             p4.met_phi,
             p4.H_pt,
             p4.H_eta,
             p4.H_phi,
             p4.H_mass,
+            p4.bjet1_pt,
+            p4.bjet1_eta,
+            p4.bjet1_phi,
+            p4.bjet1_mass,
             p4.jet1_pt,
             p4.jet1_eta,
             p4.jet1_phi,
@@ -803,6 +747,10 @@ def build_config(
             q.nbjets_loose,
             q.nbjets_medium,
 
+            q.Ht_scalar,
+            q.Ht_vector_pt,
+            q.Ht_vector_phi,
+            
             q.met_pt,
             q.met_phi,
             nanoAOD.MET_sumEt,
@@ -830,13 +778,25 @@ def build_config(
             q.mu1_fromH_phi,
             q.mu1_fromH_mass,
             q.mu1_fromH_ptErr,
-
+            q.mu1_fromH_dxy,
+            q.mu1_fromH_dz,
+            q.mu1_fromH_sip3d,
+            q.mu1_fromH_miniIso,
+            q.mu1_fromH_deepCSVClosest,
+            q.mu1_fromH_charge,
+            
             q.mu2_fromH_pt,
             q.mu2_fromH_eta,
             q.mu2_fromH_phi,
             q.mu2_fromH_mass,
             q.mu2_fromH_ptErr,
-            
+            q.mu2_fromH_dxy,
+            q.mu2_fromH_dz,
+            q.mu2_fromH_sip3d,
+            q.mu2_fromH_miniIso,
+            q.mu2_fromH_deepCSVClosest,
+            q.mu2_fromH_charge,
+
             q.extra_muon_pt,
             q.extra_muon_phi,
             q.extra_muon_mass,
@@ -852,6 +812,16 @@ def build_config(
             q.H_phi,
             q.H_mass,
             
+            q.bjet1_pt,
+            q.bjet1_eta,
+            q.bjet1_phi,
+            q.bjet1_mass,
+            
+            q.jet1_pt,
+            q.jet1_eta,
+            q.jet1_phi,
+            q.jet1_mass,
+
             q.jet1_pt,
             q.jet1_eta,
             q.jet1_phi,
