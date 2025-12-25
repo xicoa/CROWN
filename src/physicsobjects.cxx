@@ -105,7 +105,7 @@ ROOT::RDF::RNode dileptonMassClosest(
     const std::string &particle_phis, const std::string &particle_masses,
     const std::string &particle_charges, const std::string &goodmuons_index,
     const float &targetMass) {
-    auto mass_calculation = [&targetMass](
+    auto mass_calculation = [targetMass](
                                 const ROOT::RVec<float> &particle_pts,
                                 const ROOT::RVec<float> &particle_etas,
                                 const ROOT::RVec<float> &particle_phis,
@@ -460,7 +460,6 @@ ROOT::RDF::RNode HiggsCandDiMuonPairCollection(
                     particle_phis.at(goodmuon), particle_masses.at(goodmuon));
                 muons.push_back(std::pair(goodmuon, muon_p4));
             }
-
         } catch (...) {
             Logger::get("HiggsCandDiMuonPairCollection")
                 ->error("Not all muon avaliable!");
@@ -1239,9 +1238,9 @@ HtScalar(ROOT::RDF::RNode df, const std::string &outputname,
          const std::string &electrons_pt,
          const std::string &good_electrons_collection,
          const std::string &jets_pt, const std::string &jets_eta,
-         const std::string &good_jets_collection, const float max_jet_eta) {
+         const std::string &good_jets_collection, const double &max_jet_eta) {
     auto calculate_htscalar =
-        [&max_jet_eta](const ROOT::RVec<float> &muons_pt,
+        [max_jet_eta](const ROOT::RVec<float> &muons_pt,
                        const ROOT::RVec<int> &good_muons_collection,
                        const ROOT::RVec<float> &electrons_pt,
                        const ROOT::RVec<int> &good_electrons_collection,
@@ -1283,9 +1282,9 @@ ROOT::RDF::RNode HtVectorPtAndPhi(
     const std::string &electrons_phi,
     const std::string &good_electrons_collection, const std::string &jets_pt,
     const std::string &jets_phi, const std::string &jets_eta,
-    const std::string &good_jets_collection, const float max_jet_eta) {
+    const std::string &good_jets_collection, const double &max_jet_eta) {
     auto calculate_htvector =
-        [&max_jet_eta](const ROOT::RVec<float> &muons_pt,
+        [max_jet_eta](const ROOT::RVec<float> &muons_pt,
                        const ROOT::RVec<float> &muons_phi,
                        const ROOT::RVec<int> &good_muons_collection,
                        const ROOT::RVec<float> &electrons_pt,
@@ -2013,7 +2012,7 @@ CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
                     const std::string &objPhi, const std::string &objMask,
                     const std::string &thisEta, const std::string &thisPhi,
                     const float &threshold) {
-    auto lambda = [&threshold](const ROOT::RVec<float> &q,
+    auto lambda = [threshold](const ROOT::RVec<float> &q,
                                const ROOT::RVec<float> &oEta,
                                const ROOT::RVec<float> &oPhi,
                                const ROOT::RVec<int> &oMask,

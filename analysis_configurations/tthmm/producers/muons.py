@@ -114,7 +114,7 @@ BaseMuons = ProducerGroup(
         MuonDzCut,
         MuonSIP3DCut,
         MuonMiniIsoCut,
-        # MuonDeepCSVClosestCut,
+        # MuonDeepCSVClosestCut, // will be done in GoodMuons to avoid loop
     ],
 )
 
@@ -171,7 +171,7 @@ GoodMuons = ProducerGroup(
     output=[q.good_muons_mask], # vh these are the final selection muons' mask
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m", "eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
     subproducers=[
-        # MuonDeepCSVClosestCut
+        MuonDeepCSVClosestCut
         # GoodMuonPtCut,
         # GoodMuonEtaCut,
         # GoodMuonIDCut,

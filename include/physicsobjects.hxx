@@ -137,7 +137,7 @@ HtScalar(ROOT::RDF::RNode df, const std::string &outputname,
          const std::string &electrons_pt,
          const std::string &good_electrons_collection,
          const std::string &jets_pt, const std::string &jets_eta,
-         const std::string &good_jets_collection, const float max_jet_eta);
+         const std::string &good_jets_collection, const double &max_jet_eta);
 ROOT::RDF::RNode HtVectorPtAndPhi(
     ROOT::RDF::RNode df, const std::string &outputname,
     const std::string &muons_pt, const std::string &muons_phi,
@@ -145,7 +145,7 @@ ROOT::RDF::RNode HtVectorPtAndPhi(
     const std::string &electrons_phi,
     const std::string &good_electrons_collection, const std::string &jets_pt,
     const std::string &jets_phi, const std::string &jets_eta,
-    const std::string &good_jets_collection, const float max_jet_eta);
+    const std::string &good_jets_collection, const double &max_jet_eta);
 ROOT::RDF::RNode HiggsCandDiMuonGenPairCollection(
     ROOT::RDF::RNode df, const std::string &outputname,
     const std::string &Muon_indexToGen, const std::string &dimuon_index);

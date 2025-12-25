@@ -1043,7 +1043,7 @@ ROOT::RDF::RNode quantity_float(ROOT::RDF::RNode df,
                                 const std::string &outputname,
                                 const std::string &quantity,
                                 const std::string &array, const int &position) {
-    auto lambda = [&position](const ROOT::RVec<int> array,
+    auto lambda = [position](const ROOT::RVec<int> array,
                              const ROOT::RVec<float> &quantity) {
         int index = array.at(position, -1);
         return quantity.at(index, default_float);
@@ -1086,7 +1086,7 @@ ROOT::RDF::RNode quantity_int(ROOT::RDF::RNode df,
                               const std::string &outputname,
                               const std::string &quantity,
                               const std::string &array, const int &position) {
-    auto lambda = [&position](const ROOT::RVec<int> array,
+    auto lambda = [position](const ROOT::RVec<int> array,
                              const ROOT::RVec<int> &quantity) {
         int index = array.at(position, -1);
         return quantity.at(index, -100);
@@ -1109,7 +1109,7 @@ ROOT::RDF::RNode quantity_int(ROOT::RDF::RNode df,
             "The parameter 'array' is not used correctly in the "
             "quantity_int function. Please always set it to -1.");
     }
-    auto lambda = [&position](const ROOT::RVec<int> &quantity) {
+    auto lambda = [position](const ROOT::RVec<int> &quantity) {
         return quantity.at(position, default_int);
     };
     return df.Define(outputname, lambda, {quantity});

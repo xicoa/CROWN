@@ -494,7 +494,7 @@ def build_config(
     configuration.add_config_parameters(
         ["global","tthmm"],
         {
-            "ttH_max_jet_eta_for_ht": 2.5,
+            "ttH_max_jet_eta_for_ht": 4.7,
             "ttH_min_nbjets_loose": 2,
             "ttH_min_nbjets_medium": 1,
             "flag_DiMuonFromHiggs": 1,
@@ -577,7 +577,6 @@ def build_config(
             fatjets.FatJetCollection,
             fatjets.LVFatJet1,
             muons.BaseMuons,
-            event.FilterNBjet_ttH,
             
         ],
     )
@@ -619,6 +618,8 @@ def build_config(
             jets.LVJet3,
             # flag cut
             event.FilterFlagDiMuonFromHiggs,
+            event.FilterNBjet_ttH,
+
             ###
             muons.Mu1_H,
             muons.Mu2_H,
