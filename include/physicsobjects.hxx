@@ -44,7 +44,8 @@ ROOT::RDF::RNode Ele_Veto(ROOT::RDF::RNode df, const std::string &output_name,
 ROOT::RDF::RNode
 CheckDiMuon(ROOT::RDF::RNode df, const std::string &muon_collection,
             const std::string &muon_mask, const std::string &flag_dimuon,
-            const std::string &dimuon_collection, const std::string &nmuons);
+            const std::string &dimuon_collection, const std::string &nmuons,
+            const std::string &goodmuons_index);
 ROOT::RDF::RNode HiggsCandDiMuonPairCollection(
     ROOT::RDF::RNode df, const std::string &outputname,
     const std::string &particle_pts, const std::string &particle_etas,
@@ -58,12 +59,13 @@ ROOT::RDF::RNode ZCandDiElectronPairCollection(
     const std::string &base_electrons_index);
 ROOT::RDF::RNode DiEleFromZ(ROOT::RDF::RNode df, const std::string &outputname,
                             const std::string &dielectrons_index);
-ROOT::RDF::RNode FirstTwoObject_p4(
-    ROOT::RDF::RNode df, const std::string &outputname,
-    const std::string &particle_pts, const std::string &particle_etas,
-    const std::string &particle_phis, const std::string &particle_masses,
-    const std::string &diparticle_index,
-    const ROOT::RVec<int> &exclude_particle_index = {});
+ROOT::RDF::RNode TwoObject_p4(ROOT::RDF::RNode df,
+                              const std::string &outputname,
+                              const std::string &particle_pts,
+                              const std::string &particle_etas,
+                              const std::string &particle_phis,
+                              const std::string &particle_masses,
+                              const std::string &diparticle_index);
 ROOT::RDF::RNode HiggsAndZFourMuonsCollection(
     ROOT::RDF::RNode df, const std::string &outputname,
     const std::string &particle_pts, const std::string &particle_etas,

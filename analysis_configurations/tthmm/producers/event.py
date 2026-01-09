@@ -471,7 +471,7 @@ VetoVHElectron = Producer(
 # ttH
 FilterNBjet_ttH = Producer(
     name="FilterNBjet_ttH",
-    call='basefunctions::Filter({df}, "({input_0} >= {ttH_min_nbjets_loose}) || ({input_1} >= {ttH_min_nbjets_medium})", "N_Bjet_Filter (loose >= 2 or medium >=1)")',
+    call='basefunctions::Filter({df}, "({input_0} >= {ttH_min_nbjets_loose}) || ({input_1} >= {ttH_min_nbjets_medium})", "N_Bjet_Filter (loose >= 2 or medium >= 1)")',
     input=[q.nbjets_loose,q.nbjets_medium],
     output=None,
     scopes=["global","tthmm"]
@@ -628,13 +628,14 @@ CheckDiMuon = Producer(
         q.Flag_DiMuonFromHiggs,
         q.dimuon_HiggsCand_collection,
         q.nmuons,
+        q.good_muon_collection
     ],
     scopes=["global","tthmm"]
 )
 
 HiggsToDiMuonPair_p4 = Producer(
     name="HiggsToDiMuonPair_p4",
-    call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
+    call='physicsobject::TwoObject_p4({df}, {output}, {input})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
            nanoAOD.Muon_phi, 
@@ -645,7 +646,7 @@ HiggsToDiMuonPair_p4 = Producer(
 )
 HiggsToDiMuonPair_p4_4m = Producer(
     name="HiggsToDiMuonPair_p4_4m",
-    call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
+    call='physicsobject::TwoObject_p4({df}, {output}, {input})',
     input=[nanoAOD.Muon_pt,
            nanoAOD.Muon_eta, 
            nanoAOD.Muon_phi, 
@@ -667,7 +668,7 @@ ZToDiMuonPair_p4_4m = Producer(
 )
 ZToDiElectronPair_p4 = Producer(
     name="ZToDiElectronPair_p4",
-    call='physicsobject::FirstTwoObject_p4({df}, {output}, {input})',
+    call='physicsobject::TwoObject_p4({df}, {output}, {input})',
     input=[nanoAOD.Electron_pt,
            nanoAOD.Electron_eta,
            nanoAOD.Electron_phi, 

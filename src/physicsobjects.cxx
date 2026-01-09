@@ -19,6 +19,7 @@
 #include <Math/Boost.h>
 #include <Math/Vector4D.h>
 #include <Math/VectorUtil.h>
+#include <cstring>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -130,7 +131,7 @@ ROOT::RDF::RNode dileptonMassClosest(
         std::vector<ROOT::Math::PtEtaPhiMVector> p4_2;
         p4_1 = p4;
         p4_2 = p4;
-        std::vector<float> masses;
+        std::vector<float> delta_masses;
         for (unsigned int i = 0; i < p4_1.size(); ++i) {
             for (unsigned int j = i + 1; j < p4_2.size(); ++j) {
                 if (p4_1[i].pt() < 0.0 || p4_2[j].pt() < 0.0) {
@@ -142,15 +143,15 @@ ROOT::RDF::RNode dileptonMassClosest(
                     continue;
                 }
                 auto dileptonsystem = p4_1[i] + p4_2[j];
-                masses.push_back(((float)dileptonsystem.mass() - targetMass));
+                delta_masses.push_back(((float)dileptonsystem.mass() - targetMass));
             }
         }
         auto sortByAbs = [](float a, float b) { return abs(a) < abs(b); };
-        std::sort(masses.begin(), masses.end(), sortByAbs);
-        if (masses.size() <= 0) {
+        std::sort(delta_masses.begin(), delta_masses.end(), sortByAbs);
+        if (delta_masses.size() <= 0) {
             return 999.0f;
         } else {
-            return masses[0];
+            return delta_masses[0];
         }
     };
     auto df1 = df.Define(outputname, mass_calculation,
@@ -348,30 +349,94 @@ ROOT::RDF::RNode Ele_Veto(ROOT::RDF::RNode df, const std::string &output_name,
 ROOT::RDF::RNode
 CheckDiMuon(ROOT::RDF::RNode df, const std::string &muon_collection,
             const std::string &muon_mask, const std::string &flag_dimuon,
-            const std::string &dimuon_collection, const std::string &nmuons) {
+            const std::string &dimuon_collection, const std::string &nmuons,
+            const std::string &goodmuons_index) {
     auto lambda = [](const ROOT::RVec<int> &muon_collection, const int &nmuons,
                      const int &flag, const ROOT::RVec<int> &mask,
-                     const ROOT::RVec<int> &collection) {
-        if (nmuons == 1 && flag == 1) {
-            std::string msg = "";
-            msg += "nmuons == 1 and flag_dimuon_from_higgs == 1!\n";
-            msg += "from good muons:\t";
-            for (auto ele : muon_collection) {
-                msg += " " + std::to_string(ele);
-            }
-            msg += "\nmuon_mask:\t";
-            for (auto ele : mask) {
-                msg += " " + std::to_string(ele);
-            }
-            msg += "\nselect dimuon:\t";
-            for (auto ele : collection) {
-                msg += " " + std::to_string(ele);
-            }
-            Logger::get("CheckDiMuon")->warn(msg);
-        }
+                     const ROOT::RVec<int> &collection, const ROOT::RVec<int> & goodmuons_index) {
+        static int muon_collection_2_count = 0;
+        static int goodmuon_2_count = 0;
+        static int muon_mask_2_count = 0;
+        static int event_count = 0;
+        event_count++;
+        std::string msg = "";
+        // if (muon_collection.size() >= 2) {
+        //     muon_collection_2_count++;
+        //     if (muon_collection_2_count % 100 == 0) {
+        //         msg += "muon_collection with >=2 good muons: " +
+        //                std::to_string(muon_collection_2_count) + "\n";
+        //     }
+        // }
+        // if (goodmuons_index.size() >= 2){
+        //     goodmuon_2_count++;
+        //     if (goodmuon_2_count % 1000 == 0) {
+        //         msg += "goodmuons_index with >=2 good muons: " +
+        //                std::to_string(goodmuon_2_count) + "\n";
+        //     }
+        // }
+        // if (mask.size() >= 2){
+        //     muon_mask_2_count++;
+        //     if (muon_mask_2_count % 1000 == 0) {
+        //         msg += "muon_mask with >=2 good muons: " +
+        //                std::to_string(muon_mask_2_count) + "\n";
+        //     }
+        // }
+        // if (muon_collection.size() != nmuons) {
+        //     msg += "size of muon_collection and nmuons are not equal\n";
+        //     // msg += "nmuons == 1 and flag_dimuon_from_higgs == 1!\n";
+        //     msg += "good muons:\t";
+        //     for (auto ele : muon_collection) {
+        //         msg += " " + std::to_string(ele) + "\n";
+        //     }
+        //     msg += "muon_mask:\t";
+        //     for (auto ele : mask) {
+        //         msg += " " + std::to_string(ele) + "\n";
+        //     }
+        //     msg += "selected dimuon:\t";
+        //     for (auto ele : collection) {
+        //         msg += " " + std::to_string(ele) + "\n";
+        //     }
+        //     msg += "muons:\t" + std::to_string(nmuons) + "\n";
+        //     msg += "flag_dimuon_from_higgs:\t" + std::to_string(flag) + "\n";
+        // }
+        // bool print_all = 0;
+        // if (collection.size() == 0) {
+        //     msg += "size of collection == 0 !";
+        //     print_all = 1;
+        // } else {
+        //     if (event_count % 10000 == 0 || collection[0] != -1) {
+        //         print_all = 1;
+        //     } 
+        // }
+        // if (print_all) {
+        //     msg += "good muons:\t";
+        //     for (auto ele : muon_collection) {
+        //         msg += " " + std::to_string(ele);
+        //     }
+        //     msg += "\nmuon_mask:\t";
+        //     for (auto ele : mask) {
+        //         msg += " " + std::to_string(ele);
+        //     }
+        //     msg += "\nselected dimuon:\t";
+        //     for (auto ele : collection) {
+        //         msg += " " + std::to_string(ele);
+        //     }
+        //     msg += "\nmuons:\t" + std::to_string(nmuons) + "\n";
+        //     msg += "flag_dimuon_from_higgs:\t" + std::to_string(flag) + "\n";
+        // }
+        // if (!msg.empty()) {
+        //     int end = msg.length();
+        //     if (msg[end - 1] == '\n') {
+        //         msg = msg.substr(0, end - 1);
+        //     }
+        //     if (msg[0] != '\n') {
+        //         msg = "\n" + msg;
+        //     }
+        //     Logger::get("CheckDiMuon")->warn(msg);
+        // }
     };
     df.Foreach(lambda, {muon_collection, nmuons, flag_dimuon, muon_mask,
-                        dimuon_collection});
+                        dimuon_collection, goodmuons_index});
     return df;
 }
 ///
@@ -465,7 +530,6 @@ ROOT::RDF::RNode HiggsCandDiMuonPairCollection(
                 ->error("Not all muon avaliable!");
             throw "Not all muon avaliable!";
         }
-
         float ptsum = -1;
         int index1 = -1, index2 = -1;
         try {
@@ -591,59 +655,37 @@ ROOT::RDF::RNode DiEleFromZ(ROOT::RDF::RNode df, const std::string &outputname,
     auto df1 = df.Define(outputname, ZCand_Flag, {dielectrons_index});
     return df1;
 }
-// Calculate p4 of two max pt objects with same type, use exclude_particle_index
-// to exclude unwanted objects. Maybe you should use \{...\} in producer init.
-ROOT::RDF::RNode FirstTwoObject_p4(
+// Calculate p4 of two max pt objects with same type.
+ROOT::RDF::RNode TwoObject_p4(
     ROOT::RDF::RNode df, const std::string &outputname,
     const std::string &particle_pts, const std::string &particle_etas,
     const std::string &particle_phis, const std::string &particle_masses,
-    const std::string &diparticle_index,
-    const ROOT::RVec<int> &exclude_particle_index = {}) {
-    auto lambda = [exclude_particle_index](
+    const std::string &diparticle_index) {
+    auto lambda = [](
                       const ROOT::RVec<float> &particle_pts,
                       const ROOT::RVec<float> &particle_etas,
                       const ROOT::RVec<float> &particle_phis,
                       const ROOT::RVec<float> &particle_masses,
                       const ROOT::RVec<int> &diparticle_index) {
-        ROOT::RVec<int> diparticle_index_excluded = diparticle_index;
-        ROOT::Math::PtEtaPhiMVector p4_diparticle;
-        ROOT::Math::PtEtaPhiMVector p4_1, p4_2;
-        int left_particle_count = 0;
-        int first_particle_index = -1;
-        int second_particle_index = -1;
-        for (int i = 0; i < diparticle_index_excluded.size(); i++) {
-            for (int j = 0; j < exclude_particle_index.size(); j++) {
-                if (exclude_particle_index[j] != -1 &&
-                    exclude_particle_index[j] == diparticle_index_excluded[i]) {
-                    diparticle_index_excluded[i] = -1;
-                }
-            }
-            if (diparticle_index_excluded[i] != -1) {
-                left_particle_count++;
-                first_particle_index = second_particle_index;
-                second_particle_index = diparticle_index_excluded[i];
-            }
-        }
-        if (left_particle_count < 2) {
+        if (diparticle_index.size() < 2 || diparticle_index[0] < 0) {
             return ROOT::Math::PtEtaPhiMVector(default_float, default_float,
                                                default_float, default_float);
         }
         // change it to first and second
-        p4_1 = ROOT::Math::PtEtaPhiMVector(
-            particle_pts.at(diparticle_index_excluded[first_particle_index]),
-            particle_etas.at(diparticle_index_excluded[first_particle_index]),
-            particle_phis.at(diparticle_index_excluded[first_particle_index]),
-            particle_masses.at(
-                diparticle_index_excluded[first_particle_index]));
-        p4_2 = ROOT::Math::PtEtaPhiMVector(
-            particle_pts.at(diparticle_index_excluded[second_particle_index]),
-            particle_etas.at(diparticle_index_excluded[second_particle_index]),
-            particle_phis.at(diparticle_index_excluded[second_particle_index]),
-            particle_masses.at(
-                diparticle_index_excluded[second_particle_index]));
-        p4_diparticle = ROOT::Math::PtEtaPhiMVector(
-            (p4_1 + p4_2).pt(), (p4_1 + p4_2).eta(), (p4_1 + p4_2).phi(),
-            (p4_1 + p4_2).mass());
+        auto p4_1 = ROOT::Math::PtEtaPhiMVector(
+            particle_pts.at(diparticle_index[0]),
+            particle_etas.at(diparticle_index[0]),
+            particle_phis.at(diparticle_index[0]),
+            particle_masses.at(diparticle_index[0]));
+        auto p4_2 = ROOT::Math::PtEtaPhiMVector(
+            particle_pts.at(diparticle_index[1]),
+            particle_etas.at(diparticle_index[1]),
+            particle_phis.at(diparticle_index[1]),
+            particle_masses.at(diparticle_index[1]));
+        auto p4_diparticle = p4_1 + p4_2;
+        // p4_diparticle = ROOT::Math::PtEtaPhiMVector(
+        //     (p4_1 + p4_2).pt(), (p4_1 + p4_2).eta(), (p4_1 + p4_2).phi(),
+        //     (p4_1 + p4_2).mass());
         return p4_diparticle;
     };
 

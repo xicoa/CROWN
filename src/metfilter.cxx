@@ -18,8 +18,10 @@ namespace metfilter {
 ROOT::RDF::RNode ApplyMetFilter(ROOT::RDF::RNode df,
                                 const std::string &flagname,
                                 const std::string &filtername) {
-    return df.Filter([](const bool flag) { return flag; }, {flagname},
-                     filtername);
+    auto lambda = [=](const bool flag) {
+        return flag;
+    };
+    return df.Filter(lambda, {flagname}, filtername);
 }
 
 } // namespace metfilter

@@ -67,7 +67,7 @@ Muon_mvaTTH_Cut = Producer(
 MuonIDCut = Producer(
     name="MuonIDCut",
     call='physicsobject::muon::CutID({df}, {output}, "{muon_id}")',
-    #input=[nanoAOD.Muon_mediumId],
+    # input=[nanoAOD.Muon_mediumId],
     input=[],
     output=[],
     scopes=["global","gghmm","vbfhmm","tthmm"],
@@ -90,7 +90,7 @@ MuonDeepCSVClosestCut = Producer(
     name="MuonDeepCSVClosestCut",
     call="physicsobject::CutVarMaxClosestObj({df}, {output}, {input}, {max_muon_deepCSVClosest})",
     input=[
-        nanoAOD.Jet_btagDeepB,
+        nanoAOD.Jet_btagCSVV2,
         nanoAOD.Jet_eta,
         nanoAOD.Jet_phi,
         q.good_jet_collection,
@@ -110,6 +110,7 @@ BaseMuons = ProducerGroup(
         MuonPtCut,
         MuonEtaCut,
         MuonIDCut,
+        # MuonIsoCut,
         MuonDxyCut,
         MuonDzCut,
         MuonSIP3DCut,
@@ -171,7 +172,7 @@ GoodMuons = ProducerGroup(
     output=[q.good_muons_mask], # vh these are the final selection muons' mask
     scopes=["gghmm","vbfhmm","tthmm","e2m","m2m", "eemm","mmmm","nnmm","fjmm","nnmm_dycontrol","nnmm_topcontrol"],
     subproducers=[
-        MuonDeepCSVClosestCut
+        # MuonDeepCSVClosestCut
         # GoodMuonPtCut,
         # GoodMuonEtaCut,
         # GoodMuonIDCut,

@@ -604,7 +604,6 @@ def build_config(
             ###
             event.Flag_DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
             event.Flag_DiElectronMassFromZVeto,
-            event.CheckDiMuon,
             # event.LeadJetPtCut,
             # event.SubleadJetPtCut,
             # event.DiJetMassCut,
@@ -619,7 +618,8 @@ def build_config(
             # flag cut
             event.FilterFlagDiMuonFromHiggs,
             event.FilterNBjet_ttH,
-
+            event.CheckDiMuon,
+            
             ###
             muons.Mu1_H,
             muons.Mu2_H,
