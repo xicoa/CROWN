@@ -1353,3 +1353,10 @@ fatjet_deepTagMD_ZvsQCD = Producer(
     output=[q.fatjet_deepTagMD_ZvsQCD],
     scopes=["fjmm"],
 )
+randomFilter = Producer(
+    name="randomFilter",
+    call='basefunctions::RandomFilter({df}, 500)',
+    input=[],
+    output=None,
+    scopes=["global", "tthmm"],
+)

@@ -646,8 +646,8 @@ def build_config(
             jets.NumberOfGoodJets,
             jets.NumberOfLooseB, # vh count loose bjets for ttH veto
             jets.NumberOfMediumB, # vh count medium bjets for ttH veto
-            event.VetottHLooseB, # vh veto ttH no more than 1 loose bjet
-            event.VetottHMediumB, # vh veto ttH no more than 1 medium bjet
+            # event.VetottHLooseB, # vh veto ttH no more than 1 loose bjet
+            # event.VetottHMediumB, # vh veto ttH no more than 1 medium bjet
             met.MetBasics, # build met vector for calculation
             met.BuildGenMetVector,
             jets.JetCollection,
@@ -670,23 +670,23 @@ def build_config(
             muons.GoodMuons, # vh tighter selections on muons
             muons.NumberOfGoodMuons,
            # muons.MuonIDCut,
-            event.FilterNMuons, # vh ==3 muons
+            # event.FilterNMuons, # vh ==3 muons
             muons.MuonCollection, # collect ordered by pt
             ###
             event.Mask_DiMuonPair, # dimuonHiggs index
             event.Flag_DiMuonFromHiggs,
             event.HiggsToDiMuonPair_p4, # select the dimuon pairs in [110,150] and order by pt
             ###
-            event.DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
-            event.VetoVHElectron,
-            event.VetoVHMuon,
-            jets.FilterNJets,
-            event.LeadMuonPtCut,
-            event.LeadJetPtCut,
-            event.SubleadJetPtCut,
-            event.DiJetMassCut,
-            event.DiJetEtaCut,
-            lepton.LeptonChargeSumVeto,
+            # event.DiMuonMassFromZVeto,# has dimuon from Z return mask equal to 0, otherwise return 1
+            # event.VetoVHElectron,
+            # event.VetoVHMuon,
+            # jets.FilterNJets,
+            # event.LeadMuonPtCut,
+            # event.LeadJetPtCut,
+            # event.SubleadJetPtCut,
+            # event.DiJetMassCut,
+            # event.DiJetEtaCut,
+            # lepton.LeptonChargeSumVeto,
             ###
             electrons.NumberOfBaseElectrons,
             electrons.ElectronCollection,
@@ -695,7 +695,7 @@ def build_config(
             jets.LVJet2,
             # flag cut
             event.FilterFlagDiMuFromH,
-            event.FilterFlagLepChargeSum,
+            # event.FilterFlagLepChargeSum,
             ###
             muons.Mu1_H,
             muons.Mu2_H,

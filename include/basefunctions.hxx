@@ -327,13 +327,22 @@ UnrollVectorQuantity(ROOT::RDF::RNode df, const std::string &name,
         {name});
     return UnrollVectorQuantity<T>(df1, name, names, idx + 1);
 }
-/// Function to apply a maximal filter requirement to a quantity.
-/// Returns true if the value is smaller than the given cut value
-///
-/// \param cut The cut value of the filter
-///
-/// \returns a lambda function to be used in RDF Define
-inline auto FilterMax(const float &cut) {
+
+inline auto RandomFilter(ROOT::RDF::RNode df, const int &fraction) {
+    auto lambda = [fraction]() {
+        int rand_num = rand() % fraction;
+        return rand_num == 0;
+    };
+    return df.Filter(lambda, {}, "RandomFilter");
+}
+
+    /// Function to apply a maximal filter requirement to a quantity.
+    /// Returns true if the value is smaller than the given cut value
+    ///
+    /// \param cut The cut value of the filter
+    ///
+    /// \returns a lambda function to be used in RDF Define
+    inline auto FilterMax(const float &cut) {
     return [cut](const ROOT::RVec<float> &values) {
         ROOT::RVec<int> mask = values < cut;
         return mask;

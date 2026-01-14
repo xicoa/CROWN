@@ -10,7 +10,7 @@ Muon_DeepCSVClosest = Producer(
     name="Muon_DeepCSVClosest",
     call='quantities::quantity_closest_obj({df}, {output}, {input})',
     input=[
-        nanoAOD.Jet_btagDeepB,
+        nanoAOD.Jet_btagDeepB, # should be btagDeepCvB, but not all samples have it
         nanoAOD.Jet_eta,
         nanoAOD.Jet_phi,
         q.good_jet_collection,
@@ -86,11 +86,13 @@ MuonMiniIsoCut = Producer(
     output=[],
     scopes=["global","tthmm"],
 )
+
+# this function can be simplified using Producer Muon_DeepCSVClosest
 MuonDeepCSVClosestCut = Producer(
     name="MuonDeepCSVClosestCut",
     call="physicsobject::CutVarMaxClosestObj({df}, {output}, {input}, {max_muon_deepCSVClosest})",
     input=[
-        nanoAOD.Jet_btagCSVV2,
+        nanoAOD.btagDeepCvB,
         nanoAOD.Jet_eta,
         nanoAOD.Jet_phi,
         q.good_jet_collection,
@@ -111,11 +113,11 @@ BaseMuons = ProducerGroup(
         MuonEtaCut,
         MuonIDCut,
         # MuonIsoCut,
-        MuonDxyCut,
-        MuonDzCut,
-        MuonSIP3DCut,
+        # MuonDxyCut,
+        # MuonDzCut,
+        # MuonSIP3DCut, # use machine learning instead
         MuonMiniIsoCut,
-        # MuonDeepCSVClosestCut, // will be done in GoodMuons to avoid loop
+        # MuonDeepCSVClosestCut, # will be done in GoodMuons to avoid loop
     ],
 )
 

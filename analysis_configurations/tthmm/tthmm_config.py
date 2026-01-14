@@ -504,6 +504,7 @@ def build_config(
     configuration.add_config_parameters(
         ["global","tthmm"],
         {
+            "lead_muon_pt": 26,
             "min_muon_pt": 20,
             "max_muon_eta": 2.4,
             "muon_id": "Muon_mediumId", # ggh, vbf cut-based atm https://twiki.cern.ch/twiki/bin/viewauth/CMS/SWGuideMuonIdRun2#Medium_Muon]
@@ -617,6 +618,8 @@ def build_config(
             jets.LVJet3,
             # flag cut
             event.FilterFlagDiMuonFromHiggs,
+            event.LeadMuonPtCut,
+            # event.randomFilter,
             event.FilterNBjet_ttH,
             event.CheckDiMuon,
             
@@ -783,7 +786,7 @@ def build_config(
             q.mu1_fromH_dz,
             q.mu1_fromH_sip3d,
             q.mu1_fromH_miniIso,
-            q.mu1_fromH_deepCSVClosest,
+            # q.mu1_fromH_deepCSVClosest,
             q.mu1_fromH_charge,
             
             q.mu2_fromH_pt,
@@ -795,7 +798,7 @@ def build_config(
             q.mu2_fromH_dz,
             q.mu2_fromH_sip3d,
             q.mu2_fromH_miniIso,
-            q.mu2_fromH_deepCSVClosest,
+            # q.mu2_fromH_deepCSVClosest,
             q.mu2_fromH_charge,
 
             q.extra_muon_pt,
