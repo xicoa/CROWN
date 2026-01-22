@@ -49,16 +49,35 @@ def build_config(
     configuration.add_config_parameters(
         "global",
         {
+            "PU_reweighting_hist": "pileup",
             "PU_reweighting_file": EraModifier(
                 {
-                    "2016preVFP": "data/pileup/Data_Pileup_2016_271036-284044_13TeVMoriond17_23Sep2016ReReco_69p2mbMinBiasXS.root",
-                    "2016postVFP": "data/pileup/Data_Pileup_2016_271036-284044_13TeVMoriond17_23Sep2016ReReco_69p2mbMinBiasXS.root",
-                    "2017": "data/pileup/Data_Pileup_2017_294927-306462_13TeVSummer17_PromptReco_69p2mbMinBiasXS.root",
-                    "2018": "data/pileup/Data_Pileup_2018_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18.root",
-                    # "2022": "not/available/yet",
-                    "2022": "data/pileup/Data_Pileup_2018_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18.root",
+                    "2016preVFP": "data/jsonpog-integration/POG/LUM/2016preVFP_UL/puWeights.json.gz",
+                    "2016postVFP": "data/jsonpog-integration/POG/LUM/2016postVFP_UL/puWeights.json.gz",
+                    "2017": "data/jsonpog-integration/POG/LUM/2017_UL/puWeights.json.gz",
+                    "2018": "data/jsonpog-integration/POG/LUM/2018_UL/puWeights.json.gz",
+                    "2022": "data/jsonpog-integration/POG/LUM/2022_Summer22/puWeights.json.gz",
+                    "2022EE": "data/jsonpog-integration/POG/LUM/2022_Summer22EE/puWeights.json.gz",
+                    "2023": "data/jsonpog-integration/POG/LUM/2023_Summer23/puWeights.json.gz",
+                    "2023BPix": "data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
+                    "2024":"data/jsonpog-integration/POG/LUM/2023_Summer23BPix/puWeights.json.gz",
                 }
             ),
+            "PU_reweighting_era": EraModifier(
+                {
+                    "2016preVFP": "Collisions16_UltraLegacy_goldenJSON",
+                    "2016postVFP": "Collisions16_UltraLegacy_goldenJSON",
+                    "2017": "Collisions17_UltraLegacy_goldenJSON",
+                    "2018": "Collisions18_UltraLegacy_goldenJSON",
+                    "2022": "Collisions2022_355100_357900_eraBCD_GoldenJson",
+                    "2022EE": "Collisions2022_359022_362760_eraEFG_GoldenJson",
+                    "2023": "Collisions2023_366403_369802_eraBC_GoldenJson",
+                    "2023BPix": "Collisions2023_369803_370790_eraD_GoldenJson",
+                    #"2024":"Collisions2024_378981_386951_Golden",
+                    "2024": "Collisions2023_369803_370790_eraD_GoldenJson",
+                }
+            ),
+            "PU_reweighting_variation": "nominal",
             "golden_json_file": EraModifier(
                 {
                     "2016preVFP": "data/golden_json/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt",
@@ -168,7 +187,7 @@ def build_config(
 
     # Muon scale factors configuration
     configuration.add_config_parameters(
-        "global",
+        ["global", "tthmm"],
         {
             "muon_sf_file": EraModifier(
                 {
@@ -623,6 +642,7 @@ def build_config(
             event.FilterNBjet_ttH,
             event.CheckDiMuon,
             
+            scalefactors.MuonIDIso_SF,
             ###
             muons.Mu1_H,
             muons.Mu2_H,
@@ -788,6 +808,8 @@ def build_config(
             q.mu1_fromH_miniIso,
             # q.mu1_fromH_deepCSVClosest,
             q.mu1_fromH_charge,
+            q.id_wgt_mu_1,
+            q.iso_wgt_mu_1,
             
             q.mu2_fromH_pt,
             q.mu2_fromH_eta,
@@ -800,6 +822,8 @@ def build_config(
             q.mu2_fromH_miniIso,
             # q.mu2_fromH_deepCSVClosest,
             q.mu2_fromH_charge,
+            q.id_wgt_mu_2,
+            q.iso_wgt_mu_2,
 
             q.extra_muon_pt,
             q.extra_muon_phi,
@@ -927,6 +951,7 @@ def build_config(
                 genparticles.dimuon_gen_collection,
                 genparticles.genMu1_H,
                 genparticles.genMu2_H,
+                scalefactors.MuonIDIso_SF,
                 p4.genmu1_fromH_pt,
                 p4.genmu1_fromH_eta,
                 p4.genmu1_fromH_phi,

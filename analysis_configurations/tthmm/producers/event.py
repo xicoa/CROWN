@@ -193,14 +193,20 @@ Lumi = Producer(
     scopes=["global"],
 )
 
+# PUweights = Producer(
+#     name="PUweights",
+#     call='reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_hist}")',
+#     input=[nanoAOD.Pileup_nTrueInt],
+#     output=[q.puweight],
+#     scopes=["global"],
+# )
 PUweights = Producer(
     name="PUweights",
-    call='reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_hist}")',
+    call='reweighting::puweights({df}, {output}, {input}, "{PU_reweighting_file}", "{PU_reweighting_era}", "{PU_reweighting_variation}")',
     input=[nanoAOD.Pileup_nTrueInt],
     output=[q.puweight],
     scopes=["global"],
 )
-
 # fsr
 muon_fsrPhotonIdx_1 = Producer(
    name="muon_fsrPhotonIdx_1",

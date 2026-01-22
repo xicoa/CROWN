@@ -68,47 +68,45 @@ Muon_2_Iso_SF = Producer(
 ##
 Muon_1_ID_SF = Producer(
     name="MuonID_SF",
-    call='scalefactor::muon::id({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_low_sf_file}", "{muon_id_sf_name}")',
+    call='scalefactor::muon::id({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_id_sf_name}")',
     input=[q.mu1_fromH_pt, q.mu1_fromH_eta],
     output=[q.id_wgt_mu_1],
-    scopes=["vbfhmm"],
+    scopes=["vbfhmm", "tthmm"],
 )
 Muon_1_Iso_SF = Producer(
     name="MuonIso_SF",
-    call='scalefactor::muon::iso({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_low_sf_file}", "{muon_iso_sf_name}")',
+    call='scalefactor::muon::iso({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_iso_sf_name}")',
     input=[q.mu1_fromH_pt, q.mu1_fromH_eta],
     output=[q.iso_wgt_mu_1],
-    scopes=["vbfhmm"],
+    scopes=["vbfhmm", "tthmm"],
 )
 Muon_2_ID_SF = Producer(
     name="MuonID_SF",
-    call='scalefactor::muon::id({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output},  "{muon_sf_file}", "{muon_low_sf_file}", "{muon_id_sf_name}")',
+    call='scalefactor::muon::id({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_id_sf_name}")',
     input=[q.mu2_fromH_pt, q.mu2_fromH_eta],
     output=[q.id_wgt_mu_2],
-    scopes=["vbfhmm"],
+    scopes=["vbfhmm", "tthmm"],
 )
 Muon_2_Iso_SF = Producer(
     name="MuonIso_SF",
-    call='scalefactor::muon::iso({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output},  "{muon_sf_file}", "{muon_low_sf_file}", "{muon_id_sf_name}")',
+    call='scalefactor::muon::iso({df}, {input}, "{muon_sf_year_id}", "{muon_sf_varation}", {output}, "{muon_sf_file}", "{muon_iso_sf_name}")',
     input=[q.mu2_fromH_pt, q.mu2_fromH_eta],
     output=[q.iso_wgt_mu_2],
-    scopes=["vbfhmm"],
+    scopes=["vbfhmm", "tthmm"],
 )
 
-MuonIDIso_SF_vbfhmm = ProducerGroup(
-    name="MuonIDIso_SF_vbfhmm",
+MuonIDIso_SF = ProducerGroup(
+    name="MuonIDIso_SF",
     call=None,
     input=None,
     output=None,
-    scopes=["vbfhmm"],
-    subproducers={
-        "vbfhmm": [
-            Muon_1_ID_SF,
-            Muon_1_Iso_SF,
-            Muon_2_ID_SF,
-            Muon_2_Iso_SF,
-        ],
-    },
+    scopes=["global", "vbfhmm", "tthmm"],
+    subproducers=[
+        Muon_1_ID_SF,
+        Muon_1_Iso_SF,
+        Muon_2_ID_SF,
+        Muon_2_Iso_SF,
+    ],
 )
 ##
 
