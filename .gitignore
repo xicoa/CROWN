@@ -3,7 +3,6 @@
 build*/
 build/
 backups/
-data/jsonpog-integration/
 log/
 logs/
 condor/
