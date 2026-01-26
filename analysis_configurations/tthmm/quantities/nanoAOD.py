@@ -72,8 +72,8 @@ Electron_hoe = NanoAODQuantity("Electron_hoe")
 Electron_eInvMinusPInv = NanoAODQuantity("Electron_eInvMinusPInv")
 Jet_btagDeepB = NanoAODQuantity("Jet_btagDeepB")
 Jet_btagCSVV2 = NanoAODQuantity("Jet_btagCSVV2")
-btagDeepCvL = NanoAODQuantity("Jet_btagDeepCvL")
-btagDeepCvB = NanoAODQuantity("Jet_btagDeepCvB")
+Jet_btagDeepCvL = NanoAODQuantity("Jet_btagDeepCvL")
+Jet_btagDeepCvB = NanoAODQuantity("Jet_btagDeepCvB")
 # end
 
 GenJet_pt = NanoAODQuantity("GenJet_pt")

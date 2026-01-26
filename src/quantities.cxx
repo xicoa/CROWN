@@ -9,6 +9,7 @@
 #include "../include/vectoroperations.hxx"
 #include "ROOT/RDataFrame.hxx"
 #include "ROOT/RVec.hxx"
+#include "TVector2.h"
 #include <Math/Vector4D.h>
 #include <Math/VectorUtil.h>
 
@@ -1119,11 +1120,12 @@ ROOT::RDF::RNode
 quantity_closest_obj(ROOT::RDF::RNode df, const std::string &maskname,
                    const std::string &quantity, const std::string &objEta,
                    const std::string &objPhi, const std::string &objMask,
-                   const std::string &thisEta, const std::string &thisPhi) {
+                   const std::string &thisEta, const std::string &thisPhi,
+                   const float &maxDR) {
     auto lambda =
-        [](const ROOT::RVec<float> &q, const ROOT::RVec<float> &oEta,
-           const ROOT::RVec<float> &oPhi, const ROOT::RVec<int> &oMask,
-           const ROOT::RVec<float> &tEta, const ROOT::RVec<float> &tPhi) {
+        [maxDR](const ROOT::RVec<float> &q, const ROOT::RVec<float> &oEta,
+                const ROOT::RVec<float> &oPhi, const ROOT::RVec<int> &oMask,
+                const ROOT::RVec<float> &tEta, const ROOT::RVec<float> &tPhi) {
         ROOT::RVec<float> quantities(tEta.size(), 1);
         for (size_t i = 0; i < tEta.size(); i++) {
             float minDR = 1000.0;
@@ -1131,9 +1133,9 @@ quantity_closest_obj(ROOT::RDF::RNode df, const std::string &maskname,
             for (size_t j = 0; j < oMask.size(); j++) {
                 int oIndex = oMask[j];
                 float dEta = tEta[i] - oEta[oIndex];
-                float dPhi = tPhi[i] - oPhi[oIndex];
+                float dPhi = TVector2::Phi_mpi_pi(tPhi[i] - oPhi[oIndex]);
                 float deltaRSquare = dEta * dEta + dPhi * dPhi;
-                if (deltaRSquare < minDR) {
+                if (deltaRSquare < minDR && deltaRSquare < maxDR * maxDR) {
                     minDR = deltaRSquare;
                     closestObjQuantity = q[oIndex];
                 }

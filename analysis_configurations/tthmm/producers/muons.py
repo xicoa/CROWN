@@ -8,9 +8,9 @@ from code_generation.producer import Producer, ProducerGroup
 
 Muon_DeepCSVClosest = Producer(
     name="Muon_DeepCSVClosest",
-    call='quantities::quantity_closest_obj({df}, {output}, {input})',
+    call='quantities::quantity_closest_obj({df}, {output}, {input}, 0.4)',
     input=[
-        nanoAOD.Jet_btagDeepB, # should be btagDeepCvB, but not all samples have it
+        nanoAOD.Jet_btagDeepB,
         nanoAOD.Jet_eta,
         nanoAOD.Jet_phi,
         q.good_jet_collection,
@@ -90,9 +90,9 @@ MuonMiniIsoCut = Producer(
 # this function can be simplified using Producer Muon_DeepCSVClosest
 MuonDeepCSVClosestCut = Producer(
     name="MuonDeepCSVClosestCut",
-    call="physicsobject::CutVarMaxClosestObj({df}, {output}, {input}, {max_muon_deepCSVClosest})",
+    call="physicsobject::CutVarMaxClosestObj({df}, {output}, {input}, {max_muon_deepCSVClosest}, 0.4)",
     input=[
-        nanoAOD.btagDeepCvB,
+        nanoAOD.Jet_btagDeepB,
         nanoAOD.Jet_eta,
         nanoAOD.Jet_phi,
         q.good_jet_collection,
@@ -493,7 +493,16 @@ Mu1_H_DeepCSVClosest = Producer(
     output=[q.mu1_fromH_deepCSVClosest],
     scopes=["global","tthmm"],
 )
-
+Mu1_H_mva = Producer(
+    name="Mu1_H_mva",
+    call="quantities::quantity_float({df}, {output}, {input}, 0)",
+    input=[
+        nanoAOD.Muon_mvaTTH,
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu1_fromH_mva],
+    scopes=["global", "tthmm"],
+)
 
 
 Mu2_H = Producer(
@@ -564,11 +573,21 @@ Mu2_H_pTErr = Producer(
 )
 Mu2_H_DeepCSVClosest = Producer(
     name="Mu2_H_DeepCSVClosest",
-    call='quantities::quantity_float({df}, {output}, {input}, 0)',
+    call='quantities::quantity_float({df}, {output}, {input}, 1)',
     input=[
         q.muon_DeepCSVClosest,
         q.dimuon_HiggsCand_collection,
     ],
     output=[q.mu2_fromH_deepCSVClosest],
     scopes=["global","tthmm"],
+)
+Mu2_H_mva = Producer(
+    name="Mu2_H_mva",
+    call="quantities::quantity_float({df}, {output}, {input}, 1)",
+    input=[
+        nanoAOD.Muon_mvaTTH,
+        q.dimuon_HiggsCand_collection,
+    ],
+    output=[q.mu2_fromH_mva],
+    scopes=["global", "tthmm"],
 )

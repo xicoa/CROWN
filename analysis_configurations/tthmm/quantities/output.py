@@ -335,6 +335,7 @@ mu1_fromH_sip3d = Quantity("mu1_fromH_sip3d")
 mu1_fromH_miniIso = Quantity("mu1_fromH_miniIso")
 mu1_fromH_deepCSVClosest = Quantity("mu1_fromH_deepCSVClosest")
 mu1_fromH_charge = Quantity("mu1_fromH_charge")
+mu1_fromH_mva = Quantity("mu1_fromH_mva")
 
 mu2_fromH_pt = Quantity("mu2_fromH_pt")
 pt_rc_2 = Quantity("pt_rc_2")
@@ -348,6 +349,7 @@ mu2_fromH_sip3d = Quantity("mu2_fromH_sip3d")
 mu2_fromH_miniIso = Quantity("mu2_fromH_miniIso")
 mu2_fromH_deepCSVClosest = Quantity("mu2_fromH_deepCSVClosest")
 mu2_fromH_charge = Quantity("mu2_fromH_charge")
+mu2_fromH_mva = Quantity("mu2_fromH_mva")
 
 #fsr
 fsrPhotonIdx_1 = Quantity("fsrPhotonIdx_1")

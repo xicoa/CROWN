@@ -15,6 +15,7 @@
 #include "TLorentzVector.h"
 #include "TRandom3.h"
 #include "TVector3.h"
+#include "TVector2.h"
 #include "correction.h"
 #include <Math/Boost.h>
 #include <Math/Vector4D.h>
@@ -2053,24 +2054,24 @@ CutVarMaxClosestObj(ROOT::RDF::RNode df, const std::string &maskname,
                     const std::string &quantity, const std::string &objEta,
                     const std::string &objPhi, const std::string &objMask,
                     const std::string &thisEta, const std::string &thisPhi,
-                    const float &threshold) {
-    auto lambda = [threshold](const ROOT::RVec<float> &q,
-                               const ROOT::RVec<float> &oEta,
-                               const ROOT::RVec<float> &oPhi,
-                               const ROOT::RVec<int> &oMask,
-                               const ROOT::RVec<float> &tEta,
-                               const ROOT::RVec<float> &tPhi) {
+                    const float &threshold, const float &maxDR) {
+    auto lambda = [threshold, maxDR](const ROOT::RVec<float> &q,
+                                     const ROOT::RVec<float> &oEta,
+                                     const ROOT::RVec<float> &oPhi,
+                                     const ROOT::RVec<int> &oMask,
+                                     const ROOT::RVec<float> &tEta,
+                                     const ROOT::RVec<float> &tPhi) {
         ROOT::RVec<int> mask(tEta.size(), 1);
         for (size_t i = 0; i < tEta.size(); i++) {
-            float minDR = 1000.0;
+            float minDR2 = 1000.0;
             float closestObjQuantity = -1000.0;
             for (size_t j = 0; j < oMask.size(); j++) {
                 int oIndex = oMask[j];
                 float dEta = tEta[i] - oEta[oIndex];
-                float dPhi = tPhi[i] - oPhi[oIndex];
+                float dPhi = TVector2::Phi_mpi_pi(tPhi[i] - oPhi[oIndex]);
                 float deltaRSquare = dEta * dEta + dPhi * dPhi;
-                if (deltaRSquare < minDR) {
-                    minDR = deltaRSquare;
+                if (deltaRSquare < minDR2 && deltaRSquare < maxDR * maxDR) {
+                    minDR2 = deltaRSquare;
                     closestObjQuantity = q[oIndex];
                 }
             }
@@ -2119,6 +2120,7 @@ ROOT::RDF::RNode CutVarMaxClosestObjPiecewise(
     const std::string &thisPhi, const std::string &regionvar,
     const float &thresholdBelow, const float &thresholdAbove,
     const float &regionThreshold, const bool absMode) {
+    // should have a up value for DR
     auto lambda =
         [&thresholdBelow, &thresholdAbove, &regionThreshold,
          &absMode](const ROOT::RVec<float> &oEta, const ROOT::RVec<float> &oPhi,
@@ -2134,6 +2136,7 @@ ROOT::RDF::RNode CutVarMaxClosestObjPiecewise(
                 for (size_t j = 0; j < oEta.size(); j++) {
                     float dEta = tEta[i] - oEta[j];
                     float dPhi = tPhi[i] - oPhi[j];
+                    throw std::runtime_error("dPhi calculation error");
                     float deltaRSquare = dEta * dEta + dPhi * dPhi;
                     if (deltaRSquare < minDR) {
                         minDR = deltaRSquare;
